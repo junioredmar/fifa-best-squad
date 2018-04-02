@@ -8,6 +8,7 @@ namespace FifaBestSquad
 {
     public enum PositionEnum
     {
+        NONE = 0,
         CF,
         RF,
         LF,

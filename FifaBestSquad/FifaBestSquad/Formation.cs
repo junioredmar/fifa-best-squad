@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace FifaBestSquad
@@ -23,246 +24,102 @@ namespace FifaBestSquad
         private void SetPositions()
         {
             // CREATING 4-3-3
+            
+            var position = new Position { PositionEnum = PositionEnum.ST };
+            var positions = AddPosition(position, PositionEnum.RW, PositionEnum.LW, PositionEnum.CAM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
 
-            Positions.Add(new Position
+            position = new Position { PositionEnum = PositionEnum.RW };
+            positions = AddPosition(position, PositionEnum.ST, PositionEnum.RB, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.LW };
+            positions = AddPosition(position, PositionEnum.ST, PositionEnum.CM, PositionEnum.LB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.CAM };
+            positions = AddPosition(position, PositionEnum.ST, PositionEnum.CM, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.CM };
+            positions = AddPosition(position, PositionEnum.CAM, PositionEnum.RW, PositionEnum.RB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.CM };
+            positions = AddPosition(position, PositionEnum.CAM, PositionEnum.LW, PositionEnum.LB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.RB };
+            positions = AddPosition(position, PositionEnum.RW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.LB };
+            positions = AddPosition(position, PositionEnum.LW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.CB };
+            positions = AddPosition(position, PositionEnum.RB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.CB };
+            positions = AddPosition(position, PositionEnum.LB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+            position = new Position { PositionEnum = PositionEnum.GK };
+            positions = AddPosition(position, PositionEnum.CB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.AddRange(positions);
+
+        }
+
+        private List<Position> AddPosition(Position p, PositionEnum p1, PositionEnum p2, PositionEnum p3, PositionEnum p4, PositionEnum p5, PositionEnum p6)
+        {
+            List<Position> positions = new List<Position>();
+            p.Ligations.Add(new Ligation
             {
-                PositionEnum = PositionEnum.CF,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CF,
-                    PositionPlayer2 = PositionEnum.RW
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CF,
-                    PositionPlayer2 = PositionEnum.LW
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CF,
-                    PositionPlayer2 = PositionEnum.CAM
-                }
+                PositionPlayer1 = p.PositionEnum,
+                PositionPlayer2 = p1
             });
-
-            Positions.Add(new Position
+            if(p2 != PositionEnum.NONE)
             {
-                PositionEnum = PositionEnum.RW,
-                Ligation1 = new Ligation
+                p.Ligations.Add(new Ligation
                 {
-                    PositionPlayer1 = PositionEnum.RW,
-                    PositionPlayer2 = PositionEnum.CF
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.RW,
-                    PositionPlayer2 = PositionEnum.RB
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.RW,
-                    PositionPlayer2 = PositionEnum.CM
-                }
-            });
-
-            Positions.Add(new Position
+                    PositionPlayer1 = p.PositionEnum,
+                    PositionPlayer2 = p2
+                });
+            }
+            if (p3 != PositionEnum.NONE)
             {
-                PositionEnum = PositionEnum.LW,
-                Ligation1 = new Ligation
+                p.Ligations.Add(new Ligation
                 {
-                    PositionPlayer1 = PositionEnum.LW,
-                    PositionPlayer2 = PositionEnum.CF
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.LW,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.LW,
-                    PositionPlayer2 = PositionEnum.LB
-                }
-            });
-
-
-            Positions.Add(new Position
+                    PositionPlayer1 = p.PositionEnum,
+                    PositionPlayer2 = p3
+                });
+            }
+            if (p4 != PositionEnum.NONE)
             {
-                PositionEnum = PositionEnum.CAM,
-                Ligation1 = new Ligation
+                p.Ligations.Add(new Ligation
                 {
-                    PositionPlayer1 = PositionEnum.CAM,
-                    PositionPlayer2 = PositionEnum.ST
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CAM,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CAM,
-                    PositionPlayer2 = PositionEnum.CM
-                }
-            });
-
-
-            Positions.Add(new Position
+                    PositionPlayer1 = p.PositionEnum,
+                    PositionPlayer2 = p4
+                });
+            }
+            if (p5 != PositionEnum.NONE)
             {
-                PositionEnum = PositionEnum.CM,
-                Ligation1 = new Ligation
+                p.Ligations.Add(new Ligation
                 {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.CAM
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.RW
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.RB
-                },
-                Ligation4 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.CB
-                }
-            });
-
-            Positions.Add(new Position
+                    PositionPlayer1 = p.PositionEnum,
+                    PositionPlayer2 = p5
+                });
+            }
+            if (p6 != PositionEnum.NONE)
             {
-                PositionEnum = PositionEnum.CM,
-                Ligation1 = new Ligation
+                p.Ligations.Add(new Ligation
                 {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.CAM
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.LW
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.LB
-                },
-                Ligation4 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CM,
-                    PositionPlayer2 = PositionEnum.CB
-                }
-            });
-
-            Positions.Add(new Position
-            {
-                PositionEnum = PositionEnum.RB,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.RB,
-                    PositionPlayer2 = PositionEnum.RW
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.RB,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.RB,
-                    PositionPlayer2 = PositionEnum.CB
-                }
-            });
-
-
-            Positions.Add(new Position
-            {
-                PositionEnum = PositionEnum.LB,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.LB,
-                    PositionPlayer2 = PositionEnum.LW
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.LB,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.LB,
-                    PositionPlayer2 = PositionEnum.CB
-                }
-            });
-
-
-            Positions.Add(new Position
-            {
-                PositionEnum = PositionEnum.CB,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.RB
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.CB
-                },
-                Ligation4 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.GK
-                }
-            });
-
-
-            Positions.Add(new Position
-            {
-                PositionEnum = PositionEnum.CB,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.LB
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.CM
-                },
-                Ligation3 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.CB
-                },
-                Ligation4 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.CB,
-                    PositionPlayer2 = PositionEnum.GK
-                }
-            });
-
-            Positions.Add(new Position
-            {
-                PositionEnum = PositionEnum.GK,
-                Ligation1 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.GK,
-                    PositionPlayer2 = PositionEnum.CB
-                },
-                Ligation2 = new Ligation
-                {
-                    PositionPlayer1 = PositionEnum.GK,
-                    PositionPlayer2 = PositionEnum.CB
-                }
-            });
+                    PositionPlayer1 = p.PositionEnum,
+                    PositionPlayer2 = p6
+                });
+            }
+            return positions;
         }
     }
 }

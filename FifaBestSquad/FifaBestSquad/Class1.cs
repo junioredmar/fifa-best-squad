@@ -47,26 +47,30 @@ namespace FifaBestSquad
             var startPosition = _formation.Positions.FirstOrDefault(p => p.PositionEnum == startPlayer.Position);
 
             startPosition.Player = startPlayer;
-            startPosition.Ligation1.Player1 = startPlayer;
 
-            var nextPlayer = _players.FirstOrDefault(pl => pl.Position == startPosition.Ligation1.PositionPlayer2 &&
-                                                          ((pl.Club == startPosition.Ligation1.Player1.Club) ||
-                                                           (pl.Nation == startPosition.Ligation1.Player1.Nation &&
-                                                            pl.League == startPosition.Ligation1.Player1.League)));
+            //EDMAR
+            //startPosition.Ligation1.Player1 = startPlayer;
 
-            if (nextPlayer != null)
-            {
-                startPosition.Ligation1.Player2 = nextPlayer;
+            //var nextPlayer = _players.FirstOrDefault(pl => pl.Position == startPosition.Ligation1.PositionPlayer2 &&
+            //                                              ((pl.Club == startPosition.Ligation1.Player1.Club) ||
+            //                                               (pl.Nation == startPosition.Ligation1.Player1.Nation &&
+            //                                                pl.League == startPosition.Ligation1.Player1.League)));
 
-                // do next ligation
+            //if (nextPlayer != null)
+            //{
+            //    startPosition.Ligation1.Player2 = nextPlayer;
 
-                return nextPlayer.Name;
-            }
-            else
-            {
-                // return undo
-                return "UNDO";
-            }
+            //    // do next ligation
+
+            //    return nextPlayer.Name;
+            //}
+            //else
+            //{
+            //    // return undo
+            //    return "UNDO";
+            //}
+
+            return string.Empty;
         }
 
 
