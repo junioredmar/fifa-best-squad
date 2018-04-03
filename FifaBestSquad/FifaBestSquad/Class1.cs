@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FifaBestSquad.Utils;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -38,39 +39,115 @@ namespace FifaBestSquad
 
             var startPlayer = _players.FirstOrDefault();
 
-            Setup(startPlayer);
+            Setup(startPlayer, null);
 
         }
 
-        private string Setup(Player startPlayer)
+        private string Setup(Player player, Player previousPlayer)
         {
-            var startPosition = _formation.Positions.FirstOrDefault(p => p.PositionEnum == startPlayer.Position);
+            Position position;
+            if (previousPlayer == null)
+            {
+                // PRIMEIRA VEZ PASSA POR AQUI
+                position = _formation.Positions.FirstOrDefault(p => p.PositionEnum == player.Position);
+            }
+            else
+            {
+                //var previousPosition = _formation.Positions.FirstOrDefault(p => p.Player == previousPlayer);
+                //var previousLigation = previousPosition.Ligations.FirstOrDefault(l => l.Player1 == previousPlayer);
 
-            startPosition.Player = startPlayer;
+                //AQUI ELE ACHOU O OUTRO CM, mas deveria achar o CM que esta ligado com o LW
+                position = _formation.Positions.FirstOrDefault(
+                    p => p.PositionEnum == player.Position &&
+                    p.Ligations.Any(l => l.Player1 == null && l.PositionPlayer2 == previousPlayer.Position));
 
-            //EDMAR
-            //startPosition.Ligation1.Player1 = startPlayer;
+                var ligationWithPrevious = position.Ligations.FirstOrDefault(l => l.Player2 == null && l.PositionPlayer2 == previousPlayer.Position);
+                ligationWithPrevious.Player1 = player;
+                ligationWithPrevious.Player2 = previousPlayer;
+            }
 
-            //var nextPlayer = _players.FirstOrDefault(pl => pl.Position == startPosition.Ligation1.PositionPlayer2 &&
-            //                                              ((pl.Club == startPosition.Ligation1.Player1.Club) ||
-            //                                               (pl.Nation == startPosition.Ligation1.Player1.Nation &&
-            //                                                pl.League == startPosition.Ligation1.Player1.League)));
 
-            //if (nextPlayer != null)
-            //{
-            //    startPosition.Ligation1.Player2 = nextPlayer;
+            position.Player = player;
 
-            //    // do next ligation
+            var ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
 
-            //    return nextPlayer.Name;
-            //}
-            //else
-            //{
-            //    // return undo
-            //    return "UNDO";
-            //}
+            // while ligation != null
+            // {
+
+            if (ligation == null)
+            {
+                //ACABOU --->> E agora?
+                // acho que ao invez do if, devo implementar o loop com o while
+            }
+
+            ligation.Player1 = player;
+
+
+            var nextPositionInFormation = _formation.Positions.FirstOrDefault(pos =>
+                pos.Ligations.Any(l => l.Player1 != null && l.Player1 != player && l.PositionPlayer1 == ligation.PositionPlayer2));
+
+            if (nextPositionInFormation != null)
+            {
+                // O PROXIMO JOGADOR JA ESTÁ NO SQUAD - COMPARAR
+                if (player.IsGreen(nextPositionInFormation.Player))
+                {
+                    ligation.Player2 = nextPositionInFormation.Player;
+                    Setup(nextPositionInFormation.Player, player);
+                    // DEU MATCH
+                }
+                else
+                {
+                    // DESFAZ - UNDO!
+
+                }
+            }
+            else
+            {
+
+
+                var nextPlayer = _players.FirstOrDefault(pl => pl.Position == ligation.PositionPlayer2 &&
+                                                              ((pl.Club == ligation.Player1.Club) ||
+                                                               (pl.Nation == ligation.Player1.Nation &&
+                                                                pl.League == ligation.Player1.League)) &&
+                                                                !_formation.Positions.Any(
+                                                                    pos => pos.Player != null &&
+                                                                    pos.Player.BaseId == pl.BaseId)
+                                                                );
+
+                if (nextPlayer != null)
+                {
+                    if (ligation.Player2 != null)
+                    {
+                        //JA TEM LIGAÇÃO COM O PROXIMO
+                    }
+                    else
+                    {
+                        ligation.Player2 = nextPlayer;
+                    }
+
+                    // FAZ PROXIMA LIGACAO
+
+                    Setup(nextPlayer, player);
+                    //found = true
+                    //comment below
+                    return nextPlayer.Name;
+                }
+                else
+                {
+
+                    // found = false
+                    return "UNDO";
+                }
+            }
 
             return string.Empty;
+            //if (found)
+            //{
+            //    ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
+            //}
+            //end while
+            //}
+
         }
 
 
@@ -104,6 +181,7 @@ namespace FifaBestSquad
 
                             _players.Add(new Player
                             {
+                                BaseId = item.baseId,
                                 Name = item.name,
                                 Club = item.club.name,
                                 League = item.league != null ? item.league.name : string.Empty,
