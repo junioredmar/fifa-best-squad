@@ -96,20 +96,27 @@ namespace FifaBestSquad
             {
                 bool found = false;
 
+                // PARA ESSA LIGAÇÃO, SETA O PLAYER ATUAL COMO PLAYER 1
                 ligation.Player1 = player;
 
-                
+                // BUSCA TODAS AS POSITIONS DA FORMATION QUE TEM A POSITION DO PLAYER 2
                 var nextPositionInFormation = _formation.Positions.FirstOrDefault(pos =>
                     pos.Ligations.Any(l => l.Player1 != null
                                            && l.Player1 != player
                                            && l.PositionPlayer1 == ligation.PositionPlayer2)
                     && !pos.Ligations.Any(l => l.Player2 == player));
-
+                
                 if (nextPositionInFormation != null)
                 {
                     // O PROXIMO JOGADOR JA ESTÁ NO SQUAD - COMPARAR
                     if (player.IsGreen(nextPositionInFormation.Player))
                     {
+                        // JA QUE ESTAMOS VALIDANDO OS VERDES ANTES, 
+                        // TALVEZ NAO PRECISE DESSE STEP
+                        // SOMENTE PEGAR A PROXIMA LIGATION
+                        // ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
+                        // CONTINUE;
+
                         ligation.Player2 = nextPositionInFormation.Player;
                         Setup(nextPositionInFormation.Player, player);
                         // DEU MATCH
@@ -117,13 +124,14 @@ namespace FifaBestSquad
                     }
                     else
                     {
+                        // TAMBEM ACHO QUE NUNCA VAI CAIR AQUI. MESMO ASSIM VALIDAR - COLOCAR UM BREAK POINT AQUI
                         // DESFAZ - UNDO!
 
                     }
                 }
                 else
                 {
-
+                    // A PROXIMA POSITION ESTA VAZIA, ENTAO BUSCA O PROXIMO PLAYER
 
                     var nextPlayer = _players.FirstOrDefault(pl => pl.Position == ligation.PositionPlayer2 &&
                                                                   ((pl.Club == ligation.Player1.Club) ||
@@ -139,6 +147,8 @@ namespace FifaBestSquad
                         if (ligation.Player2 != null)
                         {
                             //JA TEM LIGAÇÃO COM O PROXIMO
+                            // ACHO QUE NAO É PRA CAIR AQUI. JA QUE FOI FILTRADO POR LIGATION.PLAYER2 == NULL
+                            // MESMO ASSIM, COLOCAR UM BREAKPOINT AQUI
                         }
                         else
                         {
@@ -146,18 +156,20 @@ namespace FifaBestSquad
 
                             // FAZ PROXIMA LIGACAO
                             Setup(nextPlayer, player);
-
+                            
+                            
                             found = true;
                         }
                         
                     }
                     else
                     {
-
+                        //UNDO
                         // found = false
                     }
                 }
 
+                
                 if (found)
                 {
                     ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
