@@ -53,21 +53,43 @@ namespace FifaBestSquad
             }
             else
             {
-                //var previousPosition = _formation.Positions.FirstOrDefault(p => p.Player == previousPlayer);
-                //var previousLigation = previousPosition.Ligations.FirstOrDefault(l => l.Player1 == previousPlayer);
-
+                // PEGA A POSITION QUE O PLAYER VAI SER COLOCADO
                 position = _formation.Positions.FirstOrDefault(
                     p => p.PositionEnum == player.Position &&
                     p.Ligations.Any(l => l.Player1 == null && l.PositionPlayer2 == previousPlayer.Position));
 
+
+                // VERIFICANDO SE AS POSIÇÕES AO REDOR ESTAO VERDE, SE NAO ESTIVER, UNDO
+
+                // ESSE FILTRO DEVE PEGAR AS POSIÇÕES CORRETAS!!!!
+                var nextPositionsWithPlayers = _formation.Positions.Where(p => p.Player != null &&
+                    position.Ligations.Select(l => l.PositionPlayer2).Contains(p.PositionEnum)
+                    ).ToList();
+
+                if (nextPositionsWithPlayers.Any())
+                {
+                    foreach (var nextPosition in nextPositionsWithPlayers)
+                    {
+                        // check if nextPosition.player is null
+                        if (!player.IsGreen(nextPosition.Player))
+                        {
+                            player.Name = player.Name + " UNDO";
+                            // UNDO!
+                        }
+                    }
+                }
+                
+                // LIGA A POSITION ATUAL COM A ANTERIOR
                 var ligationWithPrevious = position.Ligations.FirstOrDefault(l => l.Player2 == null && l.PositionPlayer2 == previousPlayer.Position);
                 ligationWithPrevious.Player1 = player;
                 ligationWithPrevious.Player2 = previousPlayer;
             }
 
 
+            // COLOCA O PLAYER NA POSIÇÃO
             position.Player = player;
 
+            // PEGA A PROXIMA LIGAÇÃO VAZIA 
             var ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
 
             while (ligation != null)
@@ -76,10 +98,11 @@ namespace FifaBestSquad
 
                 ligation.Player1 = player;
 
+                
                 var nextPositionInFormation = _formation.Positions.FirstOrDefault(pos =>
-                    pos.Ligations.Any(l => l.Player1 != null 
-                                           && l.Player1 != player 
-                                           && l.PositionPlayer1 == ligation.PositionPlayer2) 
+                    pos.Ligations.Any(l => l.Player1 != null
+                                           && l.Player1 != player
+                                           && l.PositionPlayer1 == ligation.PositionPlayer2)
                     && !pos.Ligations.Any(l => l.Player2 == player));
 
                 if (nextPositionInFormation != null)
