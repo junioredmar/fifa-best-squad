@@ -61,21 +61,15 @@ namespace FifaBestSquad
 
                 // VERIFICANDO SE AS POSIÇÕES AO REDOR ESTAO VERDE, SE NAO ESTIVER, UNDO
 
-                // ESSE FILTRO DEVE PEGAR AS POSIÇÕES CORRETAS!!!!
-                var nextPositionsWithPlayers = _formation.Positions.Where(p => p.Player != null &&
-                    position.Ligations.Select(l => l.PositionPlayer2).Contains(p.PositionEnum)
-                    ).ToList();
-
-                if (nextPositionsWithPlayers.Any())
+                var tiedPositions = position.TiedPositions.Where(tp => tp.Player != null).ToList();
+                
+                foreach (var tiedPosition in tiedPositions)
                 {
-                    foreach (var nextPosition in nextPositionsWithPlayers)
+                    // check if nextPosition.player is null
+                    if (!player.IsGreen(tiedPosition.Player))
                     {
-                        // check if nextPosition.player is null
-                        if (!player.IsGreen(nextPosition.Player))
-                        {
-                            player.Name = player.Name + " UNDO";
-                            // UNDO!
-                        }
+                        player.Name = player.Name + " UNDO";
+                        // UNDO!
                     }
                 }
                 

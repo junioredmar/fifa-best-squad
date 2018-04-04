@@ -25,50 +25,94 @@ namespace FifaBestSquad
         {
             // CREATING 4-3-3
             
-            var position = new Position { PositionEnum = PositionEnum.ST };
-            AddLigations(position, PositionEnum.RW, PositionEnum.LW, PositionEnum.CAM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var st = new Position { PositionEnum = PositionEnum.ST };
+            AddLigations(st, PositionEnum.RW, PositionEnum.LW, PositionEnum.CAM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(st);
 
-            position = new Position { PositionEnum = PositionEnum.RW };
-            AddLigations(position, PositionEnum.ST, PositionEnum.RB, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var rw = new Position { PositionEnum = PositionEnum.RW };
+            AddLigations(rw, PositionEnum.ST, PositionEnum.RB, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(rw);
 
-            position = new Position { PositionEnum = PositionEnum.LW };
-            AddLigations(position, PositionEnum.ST, PositionEnum.CM, PositionEnum.LB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var lw = new Position { PositionEnum = PositionEnum.LW };
+            AddLigations(lw, PositionEnum.ST, PositionEnum.CM, PositionEnum.LB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(lw);
 
-            position = new Position { PositionEnum = PositionEnum.CAM };
-            AddLigations(position, PositionEnum.ST, PositionEnum.CM, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var cam = new Position { PositionEnum = PositionEnum.CAM };
+            AddLigations(cam, PositionEnum.ST, PositionEnum.CM, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(cam);
 
-            position = new Position { PositionEnum = PositionEnum.CM };
-            AddLigations(position, PositionEnum.CAM, PositionEnum.RW, PositionEnum.RB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var cm1 = new Position { PositionEnum = PositionEnum.CM };
+            AddLigations(cm1, PositionEnum.CAM, PositionEnum.LW, PositionEnum.LB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(cm1);
 
-            position = new Position { PositionEnum = PositionEnum.CM };
-            AddLigations(position, PositionEnum.CAM, PositionEnum.LW, PositionEnum.LB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var cm2 = new Position { PositionEnum = PositionEnum.CM };
+            AddLigations(cm2, PositionEnum.CAM, PositionEnum.RW, PositionEnum.RB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(cm2);
 
-            position = new Position { PositionEnum = PositionEnum.RB };
-            AddLigations(position, PositionEnum.RW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var rb = new Position { PositionEnum = PositionEnum.RB };
+            AddLigations(rb, PositionEnum.RW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(rb);
 
-            position = new Position { PositionEnum = PositionEnum.LB };
-            AddLigations(position, PositionEnum.LW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var lb = new Position { PositionEnum = PositionEnum.LB };
+            AddLigations(lb, PositionEnum.LW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(lb);
 
-            position = new Position { PositionEnum = PositionEnum.CB };
-            AddLigations(position, PositionEnum.RB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var cb1 = new Position { PositionEnum = PositionEnum.CB };
+            AddLigations(cb1, PositionEnum.LB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(cb1);
 
-            position = new Position { PositionEnum = PositionEnum.CB };
-            AddLigations(position, PositionEnum.LB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var cb2 = new Position { PositionEnum = PositionEnum.CB };
+            AddLigations(cb2, PositionEnum.RB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(cb2);
 
-            position = new Position { PositionEnum = PositionEnum.GK };
-            AddLigations(position, PositionEnum.CB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(position);
+            var gk = new Position { PositionEnum = PositionEnum.GK };
+            AddLigations(gk, PositionEnum.CB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
+            Positions.Add(gk);
 
+            gk.TiedPositions.Add(cb1);
+            gk.TiedPositions.Add(cb2);
+
+            cb1.TiedPositions.Add(gk);
+            cb1.TiedPositions.Add(cb2);
+            cb1.TiedPositions.Add(lb);
+
+            cb2.TiedPositions.Add(gk);
+            cb2.TiedPositions.Add(cb1);
+            cb2.TiedPositions.Add(rb);
+
+            rb.TiedPositions.Add(cb2);
+            rb.TiedPositions.Add(rw);
+            rb.TiedPositions.Add(cm2);
+
+            lb.TiedPositions.Add(cb1);
+            lb.TiedPositions.Add(lw);
+            lb.TiedPositions.Add(cm1);
+
+            cm2.TiedPositions.Add(cb2);
+            cm2.TiedPositions.Add(rb);
+            cm2.TiedPositions.Add(cam);
+            cm2.TiedPositions.Add(rw);
+
+            cm1.TiedPositions.Add(cb1);
+            cm1.TiedPositions.Add(lb);
+            cm1.TiedPositions.Add(cam);
+            cm1.TiedPositions.Add(lw);
+
+            cam.TiedPositions.Add(st);
+            cam.TiedPositions.Add(cm1);
+            cam.TiedPositions.Add(cm2);
+
+            rw.TiedPositions.Add(rb);
+            rw.TiedPositions.Add(st);
+            rw.TiedPositions.Add(cm2);
+
+            lw.TiedPositions.Add(lb);
+            lw.TiedPositions.Add(st);
+            lw.TiedPositions.Add(cm1);
+
+            st.TiedPositions.Add(cam);
+            st.TiedPositions.Add(rw);
+            st.TiedPositions.Add(lw);
         }
 
         private void AddLigations(Position p, PositionEnum p1, PositionEnum p2, PositionEnum p3, PositionEnum p4, PositionEnum p5, PositionEnum p6)

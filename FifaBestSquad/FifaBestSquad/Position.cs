@@ -7,6 +7,7 @@ namespace FifaBestSquad
         public Position()
         {
             Ligations = new List<Ligation>();
+            TiedPositions = new List<Position>();
         }
 
         public PositionEnum PositionEnum { get; set; }
@@ -14,6 +15,8 @@ namespace FifaBestSquad
         public Player Player { get; set; }
 
         public List<Ligation> Ligations { get; set; }
+
+        public List<Position> TiedPositions { get; set; }
 
     }
 }
