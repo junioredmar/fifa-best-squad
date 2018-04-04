@@ -14,7 +14,7 @@ namespace FifaBestSquadMain
             Console.WriteLine("Test");
 
 
-            Class1 analyzer = new Class1();
+            Class2 analyzer = new Class2();
 
             analyzer.BuildPerfectSquad();
 

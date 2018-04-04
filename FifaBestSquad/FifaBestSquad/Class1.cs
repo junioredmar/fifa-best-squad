@@ -36,7 +36,6 @@ namespace FifaBestSquad
 
 
 
-
             var startPlayer = _players.FirstOrDefault();
 
             Setup(startPlayer, null);
@@ -50,6 +49,8 @@ namespace FifaBestSquad
             {
                 // PRIMEIRA VEZ PASSA POR AQUI
                 position = _formation.Positions.FirstOrDefault(p => p.PositionEnum == player.Position);
+                Console.WriteLine("Position: " + position.PositionEnum);
+                Console.WriteLine("Player: [name:" + player.Name + ", club:" + player.Club + ", nation:" + player.Nation + "]");
             }
             else
             {
@@ -58,25 +59,42 @@ namespace FifaBestSquad
                     p => p.PositionEnum == player.Position &&
                     p.Ligations.Any(l => l.Player1 == null && l.PositionPlayer2 == previousPlayer.Position));
 
+                Console.WriteLine("Position: " + position.PositionEnum);
+                Console.WriteLine("Previus Player: [name:" + previousPlayer.Name + ", club:" + previousPlayer.Club + ", nation:" + previousPlayer.Nation + "]");
+                Console.WriteLine("Current Player: [name:" + player.Name + ", club:" + player.Club + ", nation:" + player.Nation + "]");
 
                 // VERIFICANDO SE AS POSIÇÕES AO REDOR ESTAO VERDE, SE NAO ESTIVER, UNDO
-
                 var tiedPositions = position.TiedPositions.Where(tp => tp.Player != null).ToList();
-                
+
                 foreach (var tiedPosition in tiedPositions)
                 {
-                    // check if nextPosition.player is null
+                    //TODO check if nextPosition.player is null
                     if (!player.IsGreen(tiedPosition.Player))
                     {
-                        player.Name = player.Name + " UNDO";
+                        Console.WriteLine("[!!!!! UNDOING !!!!!] \n\tPlayer: [name:" + player.Name + ", club:" + player.Club + ", nation:" + player.Nation + "] \n\tdid not match with \n\tPlayer: [name: " + tiedPosition.Player.Name + ", club: " + tiedPosition.Player.Club + ", nation: " + tiedPosition.Player.Nation + "]");
+
                         // UNDO!
+                        return "UNDO";
                     }
                 }
-                
-                // LIGA A POSITION ATUAL COM A ANTERIOR
-                var ligationWithPrevious = position.Ligations.FirstOrDefault(l => l.Player2 == null && l.PositionPlayer2 == previousPlayer.Position);
-                ligationWithPrevious.Player1 = player;
-                ligationWithPrevious.Player2 = previousPlayer;
+
+                // LIGA A POSIÇÃO ATUAL COM TODAS AS OUTRAS
+                foreach (var tiedPosition in tiedPositions)
+                {
+                    var tiedLigations = tiedPosition.Ligations
+                        .Where(l => l.Player2 == null && l.PositionPlayer2 == tiedPosition.PositionEnum).ToList();
+
+                    foreach (var tiedLigation in tiedLigations)
+                    {
+                        tiedLigation.Player1 = tiedPosition.Player;
+                        tiedLigation.Player2 = player;
+                    }
+                }
+
+                //// LIGA A POSITION ATUAL COM A ANTERIOR
+                //var ligationWithPrevious = position.Ligations.FirstOrDefault(l => l.Player2 == null && l.PositionPlayer2 == previousPlayer.Position);
+                //ligationWithPrevious.Player1 = player;
+                //ligationWithPrevious.Player2 = previousPlayer;
             }
 
 
@@ -94,37 +112,37 @@ namespace FifaBestSquad
                 ligation.Player1 = player;
 
                 // BUSCA TODAS AS POSITIONS DA FORMATION QUE TEM A POSITION DO PLAYER 2
-                var nextPositionInFormation = _formation.Positions.FirstOrDefault(pos =>
-                    pos.Ligations.Any(l => l.Player1 != null
-                                           && l.Player1 != player
-                                           && l.PositionPlayer1 == ligation.PositionPlayer2)
-                    && !pos.Ligations.Any(l => l.Player2 == player));
-                
-                if (nextPositionInFormation != null)
-                {
-                    // O PROXIMO JOGADOR JA ESTÁ NO SQUAD - COMPARAR
-                    if (player.IsGreen(nextPositionInFormation.Player))
-                    {
-                        // JA QUE ESTAMOS VALIDANDO OS VERDES ANTES, 
-                        // TALVEZ NAO PRECISE DESSE STEP
-                        // SOMENTE PEGAR A PROXIMA LIGATION
-                        // ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
-                        // CONTINUE;
+                //var nextPositionInFormation = _formation.Positions.FirstOrDefault(pos =>
+                //    pos.Ligations.Any(l => l.Player1 != null
+                //                           && l.Player1 != player
+                //                           && l.PositionPlayer1 == ligation.PositionPlayer2)
+                //    && !pos.Ligations.Any(l => l.Player2 == player));
 
-                        ligation.Player2 = nextPositionInFormation.Player;
-                        Setup(nextPositionInFormation.Player, player);
-                        // DEU MATCH
-                        found = true;
-                    }
-                    else
-                    {
-                        // TAMBEM ACHO QUE NUNCA VAI CAIR AQUI. MESMO ASSIM VALIDAR - COLOCAR UM BREAK POINT AQUI
-                        // DESFAZ - UNDO!
+                //if (nextPositionInFormation != null)
+                //{
+                //    // O PROXIMO JOGADOR JA ESTÁ NO SQUAD - COMPARAR
+                //    if (player.IsGreen(nextPositionInFormation.Player))
+                //    {
+                //        // JA QUE ESTAMOS VALIDANDO OS VERDES ANTES, 
+                //        // TALVEZ NAO PRECISE DESSE STEP
+                //        // SOMENTE PEGAR A PROXIMA LIGATION
+                //        // ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
+                //        // CONTINUE;
 
-                    }
-                }
-                else
-                {
+                //        ligation.Player2 = nextPositionInFormation.Player;
+                //        Setup(nextPositionInFormation.Player, player);
+                //        // DEU MATCH
+                //        found = true;
+                //    }
+                //    else
+                //    {
+                //        // TAMBEM ACHO QUE NUNCA VAI CAIR AQUI. MESMO ASSIM VALIDAR - COLOCAR UM BREAK POINT AQUI
+                //        // DESFAZ - UNDO!
+
+                //    }
+                //}
+                //else
+                //{
                     // A PROXIMA POSITION ESTA VAZIA, ENTAO BUSCA O PROXIMO PLAYER
 
                     var nextPlayer = _players.FirstOrDefault(pl => pl.Position == ligation.PositionPlayer2 &&
@@ -146,24 +164,78 @@ namespace FifaBestSquad
                         }
                         else
                         {
+
+                            // LIGA
                             ligation.Player2 = nextPlayer;
 
                             // FAZ PROXIMA LIGACAO
-                            Setup(nextPlayer, player);
-                            
-                            
-                            found = true;
+                            var worked = Setup(nextPlayer, player);
+
+                            // VERIFICA SE A PROXIMA LIGAÇÃO FUNCIONOU, CASO NAO, TROCAR ESSE JOGADOR
+                            if (worked == "UNDO")
+                            {
+                                List<Player> notMathing = new List<Player>();
+                                notMathing.Add(nextPlayer);
+
+                                while (worked == "UNDO" && nextPlayer != null)
+                                {
+                                    nextPlayer = _players.FirstOrDefault(
+                                                    pl => 
+                                                        !notMathing.Contains(pl) &&
+                                                        pl.Position == ligation.PositionPlayer2
+                                                        && ((pl.Club == ligation.Player1.Club)
+                                                        || (pl.Nation == ligation.Player1.Nation
+                                                        && pl.League == ligation.Player1.League))
+                                                        && !_formation.Positions.Any(
+                                                            pos => pos.Player != null && 
+                                                            pos.Player.BaseId == pl.BaseId));
+
+                                    ligation.Player2 = nextPlayer;
+
+                                    if (nextPlayer == null)
+                                    {
+                                        // NO ONE MORE TO FIND
+
+                                        // UNDO LIGATIONS
+                                        ligation.Player1 = null;
+
+                                        //e agora jose??????????????????????????????????????????????????????????????????????
+
+                                        return "UNDO";
+                                    }
+
+                                    worked = Setup(nextPlayer, player);
+                                    if (worked == "UNDO")
+                                    {
+                                        notMathing.Add(nextPlayer);
+                                    }
+                                    else
+                                    {
+                                        // LIGA
+                                        //ligation.Player2 = nextPlayer;
+                                        found = true;
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // LIGA
+                                //ligation.Player2 = nextPlayer;
+                                found = true;
+                            }
+
                         }
-                        
+
                     }
                     else
                     {
                         //UNDO
                         // found = false
                     }
-                }
+                //}
 
-                
+
                 if (found)
                 {
                     ligation = position.Ligations.FirstOrDefault(l => l.Player2 == null);
