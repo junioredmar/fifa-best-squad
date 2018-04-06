@@ -6,68 +6,47 @@ namespace FifaBestSquad
 {
     internal class Formation
     {
-        public string Pattern { get; set; }
-
-        public List<Position> Positions { get; set; }
 
         public Formation(string formationPattern)
         {
-            Pattern = formationPattern;
+            this.Pattern = formationPattern;
 
-            Positions = new List<Position>();
+            this.Positions = new List<Position>();
 
-
-            SetPositions();
+            this.SetPositions();
 
         }
+
+        public string Pattern { get; set; }
+
+        public List<Position> Positions { get; set; }
 
         private void SetPositions()
         {
             // CREATING 4-3-3
             
-            var st = new Position { PositionEnum = PositionEnum.ST };
-            AddLigations(st, PositionEnum.RW, PositionEnum.LW, PositionEnum.CAM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(st);
-
-            var rw = new Position { PositionEnum = PositionEnum.RW };
-            AddLigations(rw, PositionEnum.ST, PositionEnum.RB, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(rw);
-
-            var lw = new Position { PositionEnum = PositionEnum.LW };
-            AddLigations(lw, PositionEnum.ST, PositionEnum.CM, PositionEnum.LB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(lw);
-
-            var cam = new Position { PositionEnum = PositionEnum.CAM };
-            AddLigations(cam, PositionEnum.ST, PositionEnum.CM, PositionEnum.CM, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(cam);
-
-            var cm1 = new Position { PositionEnum = PositionEnum.CM };
-            AddLigations(cm1, PositionEnum.CAM, PositionEnum.LW, PositionEnum.LB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(cm1);
-
-            var cm2 = new Position { PositionEnum = PositionEnum.CM };
-            AddLigations(cm2, PositionEnum.CAM, PositionEnum.RW, PositionEnum.RB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(cm2);
-
-            var rb = new Position { PositionEnum = PositionEnum.RB };
-            AddLigations(rb, PositionEnum.RW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(rb);
-
-            var lb = new Position { PositionEnum = PositionEnum.LB };
-            AddLigations(lb, PositionEnum.LW, PositionEnum.CM, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(lb);
-
-            var cb1 = new Position { PositionEnum = PositionEnum.CB };
-            AddLigations(cb1, PositionEnum.LB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(cb1);
-
-            var cb2 = new Position { PositionEnum = PositionEnum.CB };
-            AddLigations(cb2, PositionEnum.RB, PositionEnum.CM, PositionEnum.CB, PositionEnum.GK, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(cb2);
-
-            var gk = new Position { PositionEnum = PositionEnum.GK };
-            AddLigations(gk, PositionEnum.CB, PositionEnum.CB, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE, PositionEnum.NONE);
-            Positions.Add(gk);
+            var st = new Position { PositionEnum = PositionEnum.ST, Index = 'A'};
+            this.Positions.Add(st);
+            var rw = new Position { PositionEnum = PositionEnum.RW, Index = 'B' };
+            this.Positions.Add(rw);
+            var lw = new Position { PositionEnum = PositionEnum.LW, Index = 'C' };
+            this.Positions.Add(lw);
+            var cam = new Position { PositionEnum = PositionEnum.CAM, Index = 'D' };
+            this.Positions.Add(cam);
+            var cm1 = new Position { PositionEnum = PositionEnum.CM, Index = 'E' };
+            this.Positions.Add(cm1);
+            var cm2 = new Position { PositionEnum = PositionEnum.CM, Index = 'F' };
+            this.Positions.Add(cm2);
+            var rb = new Position { PositionEnum = PositionEnum.RB, Index = 'G' };
+            this.Positions.Add(rb);
+            var lb = new Position { PositionEnum = PositionEnum.LB, Index = 'H' };
+            this.Positions.Add(lb);
+            var cb1 = new Position { PositionEnum = PositionEnum.CB, Index = 'I' };
+            this.Positions.Add(cb1);
+            var cb2 = new Position { PositionEnum = PositionEnum.CB, Index = 'J' };
+            this.Positions.Add(cb2);
+            var gk = new Position { PositionEnum = PositionEnum.GK, Index = 'K' };
+            this.Positions.Add(gk);
 
             gk.TiedPositions.Add(cb1);
             gk.TiedPositions.Add(cb2);
@@ -115,54 +94,5 @@ namespace FifaBestSquad
             st.TiedPositions.Add(lw);
         }
 
-        private void AddLigations(Position p, PositionEnum p1, PositionEnum p2, PositionEnum p3, PositionEnum p4, PositionEnum p5, PositionEnum p6)
-        {
-            p.Ligations.Add(new Ligation
-            {
-                PositionPlayer1 = p.PositionEnum,
-                PositionPlayer2 = p1
-            });
-
-            if(p2 != PositionEnum.NONE)
-            {
-                p.Ligations.Add(new Ligation
-                {
-                    PositionPlayer1 = p.PositionEnum,
-                    PositionPlayer2 = p2
-                });
-            }
-            if (p3 != PositionEnum.NONE)
-            {
-                p.Ligations.Add(new Ligation
-                {
-                    PositionPlayer1 = p.PositionEnum,
-                    PositionPlayer2 = p3
-                });
-            }
-            if (p4 != PositionEnum.NONE)
-            {
-                p.Ligations.Add(new Ligation
-                {
-                    PositionPlayer1 = p.PositionEnum,
-                    PositionPlayer2 = p4
-                });
-            }
-            if (p5 != PositionEnum.NONE)
-            {
-                p.Ligations.Add(new Ligation
-                {
-                    PositionPlayer1 = p.PositionEnum,
-                    PositionPlayer2 = p5
-                });
-            }
-            if (p6 != PositionEnum.NONE)
-            {
-                p.Ligations.Add(new Ligation
-                {
-                    PositionPlayer1 = p.PositionEnum,
-                    PositionPlayer2 = p6
-                });
-            }
-        }
     }
 }
