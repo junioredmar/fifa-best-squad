@@ -39,7 +39,15 @@ namespace FifaBestSquad
 
             var startPlayer = this.players.FirstOrDefault();
 
-            Setup();
+            
+            foreach (var position in formation.Positions)
+            {
+                Console.WriteLine(Setup());
+                foreach (var pos in formation.Positions)
+                {
+                    pos.Player = null;
+                }
+            }
 
         }
 
@@ -59,8 +67,7 @@ namespace FifaBestSquad
             {
                 player = this.players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
             }
-
-
+            
             var notMathingNeighbors = position.TiedPositions.Where(tp => tp.Player != null && !player.IsGreen(tp.Player));
             if (notMathingNeighbors.Any())
             {
@@ -73,38 +80,26 @@ namespace FifaBestSquad
             {
                 if (tiedPosition.Player == null)
                 {
-                    var nextPlayer = this.players.FirstOrDefault(pl => pl.Position == tiedPosition.PositionEnum &&
-                                                                    ((pl.Club == player.Club) || (pl.Nation == player.Nation && pl.League == player.League)) &&
-                                                                   !this.formation.Positions.Any(pos => pos.Player != null && pos.Player.BaseId == pl.BaseId));
 
-                    var status = this.Setup(tiedPosition, nextPlayer);
-
-                    List<Player> notMathing = new List<Player>();
-                    notMathing.Add(nextPlayer);
-
-                    while (status == "ERROR" && nextPlayer != null)
+                    List<int> notMathing = new List<int>();
+                    string status = string.Empty;
+                    do
                     {
-                        //nextPlayer = _players.FirstOrDefault(
-                        //    pl =>
-                        //        !notMathing.Contains(pl) &&
-                        //        pl.Position == ligation.PositionPlayer2
-                        //        && ((pl.Club == ligation.Player1.Club)
-                        //            || (pl.Nation == ligation.Player1.Nation
-                        //                && pl.League == ligation.Player1.League))
-                        //        && !_formation.Positions.Any(
-                        //            pos => pos.Player != null &&
-                        //                   pos.Player.BaseId == pl.BaseId));
+                        var nextPlayer = this.players.FirstOrDefault(pl => !notMathing.Contains(pl.BaseId) &&
+                                                             pl.Position == tiedPosition.PositionEnum &&
+                                                             ((pl.Club == player.Club) || (pl.Nation == player.Nation && pl.League == player.League)) &&
+                                                             !this.formation.Positions.Any(pos => pos.Player != null && pos.Player.BaseId == pl.BaseId));
 
                         if (nextPlayer == null)
                         {
-                            //ESGOTOU AS POSSIBILIDADES
+                            position.Player = null;
                             return "ERROR";
                         }
-                        notMathing.Add(nextPlayer);
+                        notMathing.Add(nextPlayer.BaseId);
 
                         status = this.Setup(tiedPosition, nextPlayer);
 
-                    }
+                    } while (status == "ERROR");                    
 
                 }
             }
