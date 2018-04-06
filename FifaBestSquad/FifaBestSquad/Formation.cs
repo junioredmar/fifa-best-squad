@@ -20,7 +20,23 @@ namespace FifaBestSquad
         public string Pattern { get; set; }
 
         public List<Position> Positions { get; set; }
+        
+        //    _    
+        //_       _
+        //    _    
+        //  _   _  
+        //_       _
+        //  _   _  
+        //    _    
 
+        
+        //    A    
+        //C       B
+        //    D    
+        //  E   F  
+        //H       G
+        //  I   J  
+        //    K    
         private void SetPositions()
         {
             // CREATING 4-3-3

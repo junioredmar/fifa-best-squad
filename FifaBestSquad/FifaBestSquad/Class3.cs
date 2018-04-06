@@ -23,16 +23,18 @@ namespace FifaBestSquad
         {
             //GetFromPlayersFromEa();
 
-            SetPlayersToMemory();
+            //SetPlayersToMemory();
 
             BuildSquad();
         }
 
         private void BuildSquad()
         {
-            this.players = this.players.OrderByDescending(p => p.Rating).ToList();
-            this.players = this.players.Where(p => p.Rating > 78 && p.Rating <= 86).ToList();
+            //this.players = this.players.OrderByDescending(p => p.Rating).ToList();
+            //this.players = this.players.Where(p => p.Rating > 78 && p.Rating <= 86).ToList();
             this.formation = new Formation("4-3-3");
+            
+            this.BuildOrder();
 
         }
 
@@ -44,46 +46,58 @@ namespace FifaBestSquad
                 bool allPossiblePathsGone = false;
                 do
                 {
-                    var queue = new Queue<char>();
-                    this.SetupOrder(position, queue);
-                    position.Queues.Add(queue);
+                    var reached = this.SetupOrder(position, stack);
+                    Console.WriteLine(reached);
+                    position.Paths.Add(stack);
 
+                    foreach (var item in stack)
+                    {
+                        Console.WriteLine(item);
+                    }
+                    Console.WriteLine("-------------------");
                 }
                 while (allPossiblePathsGone);
 
+                // Cleaning
+                position.Visited = false;
+                foreach (var pos in this.formation.Positions)
+                {
+                    pos.Visited = false;
+                }
+
             }
         }
+        
 
-        private void SetupOrder(Position position, Queue<char> queue)
+        private string SetupOrder(Position position, List<char> stack)
         {
-            queue.Enqueue(position.Index);
+            stack.Add(position.Index);
             position.Visited = true;
 
-            var filteredQueues = position.Queues.Where(q => q.Contains(position.Index));
-            if (filteredQueues.Any())
+            foreach (var tiedPosition in position.TiedPositions)
             {
-                var nextNode = 'B';
+                if (tiedPosition.Visited)
+                {
+                    continue;
+                }
+
+                string status;
+                do
+                {
+
+                    var nextPosition = position.TiedPositions.FirstOrDefault(tp => !tp.Visited);
+
+                    if (nextPosition == null)
+                    {
+                        return "REACHED";
+                    }
+
+                    status = this.SetupOrder(tiedPosition, stack);
+                }
+                while (status == "REACHED");
             }
 
-            //var alreadyPassed = 0;
-
-            var nextPositions = position.TiedPositions.Where(tp => !tp.Visited);
-            if (!nextPositions.Any())
-            {
-                return;
-            }
-
-            foreach (var node in nextPositions)
-            {
-                //if (filteredQueues.Contains(node.Index))
-                //{
-
-                //}
-            }
-
-
-
-            this.SetupOrder(nextPositions.FirstOrDefault(), queue);
+            return string.Empty;
 
         }
         

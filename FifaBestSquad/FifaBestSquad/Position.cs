@@ -7,6 +7,7 @@ namespace FifaBestSquad
         public Position()
         {
             this.TiedPositions = new List<Position>();
+            this.Paths = new List<List<char>>();
         }
 
         public PositionEnum PositionEnum { get; set; }
@@ -17,12 +18,12 @@ namespace FifaBestSquad
 
 
 
-        // Building properties of queuing
+        // Building properties of queuinggrap
         public char Index { get; set; }
 
         public bool Visited { get; set; }
         
-        public List<Queue<char>> Queues { get; set; }
+        public List<List<char>> Paths { get; set; }
 
     }
 }
