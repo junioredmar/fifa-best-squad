@@ -30,7 +30,8 @@ namespace FifaBestSquad
         {
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
 
-            this.players = this.players.Where(p => p.League.ToLower().StartsWith("pre")).ToList();
+            //this.players = this.players.Where(p => p.League.ToLower().StartsWith("pre")).ToList();
+            this.players = this.players.Where(p => p.Rating > 81 && p.Rating <= 87).ToList();
 
             string formationPattern = "4-3-3";
             this.formation = new Formation(formationPattern);
@@ -39,10 +40,26 @@ namespace FifaBestSquad
 
             var startPlayer = this.players.FirstOrDefault();
 
+
+
             
             foreach (var position in formation.Positions)
             {
-                Console.WriteLine(Setup());
+                Player firstPlayer = this.players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
+
+                var status = Setup(position, firstPlayer);
+                Console.WriteLine("------------------["+position.PositionEnum+"]-------------------------");
+                if(status != "ERROR")
+                {
+                    int soma = 0;
+                    foreach (var pos in formation.Positions)
+                    {
+                        soma = soma + pos.Player.Rating;
+                        Console.WriteLine("[" + pos.PositionEnum + "] " + pos.Player.Name);
+                    }
+
+                    Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+                }
                 foreach (var pos in formation.Positions)
                 {
                     pos.Player = null;
@@ -52,30 +69,17 @@ namespace FifaBestSquad
         }
 
         private string Setup(Position position = null, Player player = null)
-        {
-            if (position == null)
-            {
-                position = this.formation.Positions.FirstOrDefault(p => p.Player == null);
-                if (position == null)
-                {
-                    // DONE
-                    return "DONE";
-                }
-            }
-
-            if (player == null)
-            {
-                player = this.players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
-            }
-            
+        {            
             var notMathingNeighbors = position.TiedPositions.Where(tp => tp.Player != null && !player.IsGreen(tp.Player));
             if (notMathingNeighbors.Any())
             {
                 return "ERROR";
             }
 
-            position.Player = player;
 
+            // RELATE PLAYER AT POSITION
+            position.Player = player;
+            
             foreach (var tiedPosition in position.TiedPositions)
             {
                 if (tiedPosition.Player == null)
