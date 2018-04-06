@@ -29,90 +29,128 @@ namespace FifaBestSquad
         private void BuildSquad()
         {
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
+            this.players = this.players.Where(p => p.Rating > 78 && p.Rating <= 86).ToList();
+            this.formation = new Formation("4-3-3");
+            var topTen = this.players.Take(50);
 
-            //this.players = this.players.Where(p => p.League.ToLower().StartsWith("pre")).ToList();
-            this.players = this.players.Where(p => p.Rating > 81 && p.Rating <= 87).ToList();
-
-            string formationPattern = "4-3-3";
-            this.formation = new Formation(formationPattern);
-
-
-
-            var startPlayer = this.players.FirstOrDefault();
-
-
-
-            
-            foreach (var position in formation.Positions)
+            foreach (var player in topTen)
             {
-                Player firstPlayer = this.players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
-
-                var status = Setup(position, firstPlayer);
-                Console.WriteLine("------------------["+position.PositionEnum+"]-------------------------");
-                if(status != "ERROR")
+                var position = this.formation.Positions.FirstOrDefault(p => p.PositionEnum == player.Position);
+                if (position == null)
                 {
-                    int soma = 0;
-                    foreach (var pos in formation.Positions)
-                    {
-                        soma = soma + pos.Player.Rating;
-                        Console.WriteLine("[" + pos.PositionEnum + "] " + pos.Player.Name);
-                    }
-
-                    Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+                    continue;
                 }
-                foreach (var pos in formation.Positions)
+
+                var status = this.Setup(position, player);
+
+                if (status == "ERROR")
+                {
+                    continue;
+                }
+
+                // CONSOLE.WRITE RESULTS
+                Console.WriteLine("------------------[" + position.PositionEnum + "][" + player.Name + "]-------------------------");
+                
+                var soma = 0;
+                foreach (var pos in this.formation.Positions)
+                {
+                    soma = soma + pos.Player.Rating;
+                    Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
+                }
+
+                Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+                
+
+                // CLEANING POSITIONS
+                foreach (var pos in this.formation.Positions)
                 {
                     pos.Player = null;
                 }
             }
 
+            foreach (var position in this.formation.Positions)
+            {
+                Player firstPlayer = this.players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
+
+                var status = this.Setup(position, firstPlayer);
+
+                if (status == "ERROR")
+                {
+                    continue;
+                }
+
+                // CONSOLE.WRITE RESULTS
+                Console.WriteLine("------------------[" + position.PositionEnum + "]-------------------------");
+                var soma = 0;
+                foreach (var pos in this.formation.Positions)
+                {
+                    soma = soma + pos.Player.Rating;
+                    Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
+                }
+
+                Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+
+                // CLEANING POSITIONS
+                foreach (var pos in this.formation.Positions)
+                {
+                    pos.Player = null;
+                }
+            }
+
+            Console.WriteLine("______________________________________COMPLETED______________________________________");
+
         }
 
-        private string Setup(Position position = null, Player player = null)
-        {            
+        private string Setup(Position position, Player player)
+        {
             var notMathingNeighbors = position.TiedPositions.Where(tp => tp.Player != null && !player.IsGreen(tp.Player));
             if (notMathingNeighbors.Any())
             {
                 return "ERROR";
             }
 
-
             // RELATE PLAYER AT POSITION
             position.Player = player;
-            
+
             foreach (var tiedPosition in position.TiedPositions)
             {
-                if (tiedPosition.Player == null)
+                if (tiedPosition.Player != null)
                 {
-
-                    List<int> notMathing = new List<int>();
-                    string status = string.Empty;
-                    do
-                    {
-                        var nextPlayer = this.players.FirstOrDefault(pl => !notMathing.Contains(pl.BaseId) &&
-                                                             pl.Position == tiedPosition.PositionEnum &&
-                                                             ((pl.Club == player.Club) || (pl.Nation == player.Nation && pl.League == player.League)) &&
-                                                             !this.formation.Positions.Any(pos => pos.Player != null && pos.Player.BaseId == pl.BaseId));
-
-                        if (nextPlayer == null)
-                        {
-                            position.Player = null;
-                            return "ERROR";
-                        }
-                        notMathing.Add(nextPlayer.BaseId);
-
-                        status = this.Setup(tiedPosition, nextPlayer);
-
-                    } while (status == "ERROR");                    
-
+                    continue;
                 }
+
+                var alreadyTested = new List<int>();
+                string status;
+                do
+                {
+                    var nextPlayer = this.GetNextPlayer(player, alreadyTested, tiedPosition);
+
+                    if (nextPlayer == null)
+                    {
+                        position.Player = null;
+                        return "ERROR";
+                    }
+
+                    alreadyTested.Add(nextPlayer.BaseId);
+
+                    status = this.Setup(tiedPosition, nextPlayer);
+                }
+                while (status == "ERROR");
             }
 
             return string.Empty;
         }
 
-
-
+        private Player GetNextPlayer(Player player, ICollection<int> notMathing, Position tiedPosition)
+        {
+            var nextPlayer = this.players.FirstOrDefault(
+                pl => !notMathing.Contains(pl.BaseId) && pl.Position == tiedPosition.PositionEnum
+                                                      && ((pl.Club == player.Club)
+                                                          || (pl.Nation == player.Nation && pl.League == player.League))
+                                                      && !this.formation.Positions.Any(
+                                                          pos => pos.Player != null && pos.Player.BaseId == pl.BaseId));
+            return nextPlayer;
+        }
 
         private void SetPlayersToMemory()
         {
