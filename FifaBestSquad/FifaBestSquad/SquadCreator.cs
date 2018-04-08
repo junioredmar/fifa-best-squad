@@ -41,7 +41,8 @@ namespace FifaBestSquad
 
         private void BuildSquad()
         {
-            this.players = this.players.Where(p => p.Club != "Icons" && p.Rating > 78 && p.Rating <= 86).ToList();
+            //this.players = this.players.Where(p => p.Club != "Icons" && p.Rating > 78 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
+            this.players = this.players.Where(p => p.Club != "Icons" && p.League.ToLower().StartsWith("pre")).ToList();
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
             this.formation = new Formation("4-3-3");
 
@@ -51,6 +52,7 @@ namespace FifaBestSquad
 
             this.BuildAll();
 
+            this.PrintResults();
         }
 
         private void BuildAll()
@@ -93,13 +95,14 @@ namespace FifaBestSquad
             var alreadyTested = new List<int>();
             do
             {
-                var tiedPlayers = nextPosition.TiedPositions.Where(tp => tp.Player != null).Select(tp => tp.Player);
+                var tiedPlayers = position.TiedPositions.Where(tp => tp.Player != null).Select(tp => tp.Player).ToList();
+                tiedPlayers.Add(player);
                 var usedPlayers = formation.Positions.Where(pos => pos.Player != null).Select(pos => pos.Player).Select(pl => pl.BaseId);
                 var nextPlayer = players.FirstOrDefault(p => p.Position == nextPosition.PositionEnum &&
                                                              !alreadyTested.Contains(p.BaseId) &&
                                                              !usedPlayers.Contains(p.BaseId) && 
                                                              p.IsAnyGreen(tiedPlayers));
-
+                
                 if (nextPlayer == null)
                 {
                     position.Player = null;
@@ -113,6 +116,17 @@ namespace FifaBestSquad
             } while (status == "ERROR");
 
             return "DONE";
+        }
+
+        private Player GetNextPlayer(Player player, ICollection<int> notMathing, Position tiedPosition)
+        {
+            var nextPlayer = this.players.FirstOrDefault(
+                pl => !notMathing.Contains(pl.BaseId) && pl.Position == tiedPosition.PositionEnum
+                                                      && ((pl.Club == player.Club)
+                                                          || (pl.Nation == player.Nation && pl.League == player.League))
+                                                      && !this.formation.Positions.Any(
+                                                          pos => pos.Player != null && pos.Player.BaseId == pl.BaseId));
+            return nextPlayer;
         }
 
         private void Build()
@@ -142,20 +156,25 @@ namespace FifaBestSquad
                     continue;
                 }
 
-                // CONSOLE.WRITE RESULTS
-                var soma = 0;
-                foreach (var pos in this.formation.Positions)
-                {
-                    soma = soma + pos.Player.Rating;
-                    Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
-                }
-                Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+                PrintResults();
 
                 // Cleaning
                 Clean();
 
                 Console.ReadLine();
             }
+        }
+
+        private void PrintResults()
+        {
+            // CONSOLE.WRITE RESULTS
+            var soma = 0;
+            foreach (var pos in this.formation.Positions)
+            {
+                soma = soma + pos.Player.Rating;
+                Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
+            }
+            Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
         }
 
         private void Clean()
