@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace FifaBestSquad
 {
+    // funciona, mas nao eh o perfeito (escolhe um caminho aleatorio)
     public class Class2
     {
         private const string Path = "../../content";

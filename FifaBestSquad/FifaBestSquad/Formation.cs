@@ -29,14 +29,6 @@ namespace FifaBestSquad
         //  _   _  
         //    _    
 
-        
-        //    A    
-        //C       B
-        //    D    
-        //  E   F  
-        //H       G
-        //  I   J  
-        //    K    
         private void SetPositions()
         {
             // CREATING 4-3-3

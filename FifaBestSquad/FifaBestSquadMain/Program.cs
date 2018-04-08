@@ -14,7 +14,8 @@ namespace FifaBestSquadMain
             Console.WriteLine("Test");
 
 
-            Class3 analyzer = new Class3();
+            //Class4 analyzer = new Class4();
+            SquadCreator analyzer = new SquadCreator();
 
             analyzer.BuildPerfectSquad();
 
