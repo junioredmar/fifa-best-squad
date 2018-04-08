@@ -18,6 +18,7 @@ namespace FifaBestSquad
     //H       G
     //  I   J  
     //    K    
+    // KJGBACHIED
 
     public class SquadCreator
     {
@@ -52,22 +53,85 @@ namespace FifaBestSquad
 
             this.BuildAll();
 
+            //this.BuildAllTest();
+
             this.PrintResults();
+        }
+
+        private void BuildAllTest()
+        {
+            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
+            Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+            if (playerPosition == null)
+            {
+                //NOT IN THIS POSITION
+                return;
+            }
+
+            BuildByPermutation("ABCDEFGIHJK", 0, player);
+
+            // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
+            var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+            if (allPlayers.Count() < 11)
+            {
+                Clean();
+                return;
+            }
+            
+            PrintResults();
+            Clean();
         }
 
         private void BuildAll()
         {
-            string permutation = "ACHIKJGBFDE";
+            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
+            Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+            if(playerPosition == null)
+            {
+                //NOT IN THIS POSITION
+                return;
+            }
+            //string permutation = "KJGBACHIED";
+            //string permutation = "ACHIKJGBFDE";
 
-            //BuildPermutations permutations = new BuildPermutations();
-            //permutations.Build("ABCDEFGHIJK");
+            BuildPermutations permutations = new BuildPermutations();
+            permutations.Build("ABCDEFGHIJK");
 
-            //foreach (var permutation in permutations.results)
-            //{
-                var position = formation.Positions.FirstOrDefault(pos => pos.Index == permutation[0]);
-                var player = players.FirstOrDefault(pl => pl.Position == position.PositionEnum);
+            /* var position = formation.Positions.FirstOrDefault(pos => pos.Index == permutation[0]);
+            var player = players.FirstOrDefault(pl => pl.Position == position.PositionEnum); */
+            var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString()));
+            Console.WriteLine("TENTATIVES: " + iterations.Count());
+
+            int count = 0;
+            for (int i = 0; i < iterations.Count(); i++)
+            {
+                var permutation = iterations.ElementAt(i);
+
+                // CONSOLE WRITE AT 100
+                if(count == 0)
+                {
+                    Console.WriteLine("Iteration: " + i + " - " + permutation);
+                }
+                if(count == 100)
+                {
+                    count = 0;
+                }
+                count++;
+
                 BuildByPermutation(permutation, 0, player);
-            //}
+                
+                // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
+                var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+                if (allPlayers.Count() < 11)
+                {
+                    Clean();
+                    continue;
+                }
+
+                Console.WriteLine("------------------[" + permutation + "]-------------------------");
+                PrintResults();
+                Clean();
+            }
         }
 
         private string BuildByPermutation(string permutation, int indexNumber, Player player)
@@ -95,7 +159,7 @@ namespace FifaBestSquad
             var alreadyTested = new List<int>();
             do
             {
-                var tiedPlayers = position.TiedPositions.Where(tp => tp.Player != null).Select(tp => tp.Player).ToList();
+                var tiedPlayers = nextPosition.TiedPositions.Where(tp => tp.Player != null).Select(tp => tp.Player).ToList();
                 tiedPlayers.Add(player);
                 var usedPlayers = formation.Positions.Where(pos => pos.Player != null).Select(pos => pos.Player).Select(pl => pl.BaseId);
                 var nextPlayer = players.FirstOrDefault(p => p.Position == nextPosition.PositionEnum &&
@@ -171,8 +235,11 @@ namespace FifaBestSquad
             var soma = 0;
             foreach (var pos in this.formation.Positions)
             {
-                soma = soma + pos.Player.Rating;
-                Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
+                if (pos.Player != null)
+                {
+                    soma = soma + pos.Player.Rating;
+                    Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
+                }
             }
             Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
         }
