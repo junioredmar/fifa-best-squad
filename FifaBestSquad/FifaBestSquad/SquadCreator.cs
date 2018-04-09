@@ -35,128 +35,125 @@ namespace FifaBestSquad
         private FormationViewModel result;
 
 
-        public void BuildPerfectSquad(List<string> paths)
+        public void BuildPerfectSquad(List<string> permutations)
         {
-            result = new FormationViewModel();
-            //GetFromPlayersFromEa();
+            this.result = new FormationViewModel();
+            // this.GetFromPlayersFromEa();
 
-            SetPlayersToMemory();
+            this.SetPlayersToMemory();
 
-            BuildSquad(paths);
+            this.BuildSquad(permutations);
         }
 
-        private void BuildSquad(List<string> paths)
+        private void BuildSquad(List<string> permutations)
         {
             //this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
             this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86).ToList();
-            //this.players = this.players.Where(p => p.Club != "Icons" && p.League.ToLower().StartsWith("pre") ).ToList();
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
             this.formation = new Formation("4-3-3");
 
-            //this.BuildOrder();
+            this.BuildAll(permutations);
 
-            //this.Build();
-
-            this.BuildAll(paths);
-
-
-            //this.BuildAllTest();
+            // this.BuildAllTest(permutations);
 
         }
 
-        //private void BuildAllTest()
-        //{
-        //    Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
-        //    Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-        //    if (playerPosition == null)
-        //    {
-        //        //NOT IN THIS POSITION
-        //        return;
-        //    }
-
-        //    BuildByPermutation("ABCDEFGIHJK", 0, player);
-
-        //    // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
-        //    var allPlayers = formation.Positions.Where(pos => pos.Player != null);
-        //    if (allPlayers.Count() < 11)
-        //    {
-        //        Clean();
-        //        return;
-        //    }
-            
-        //    PrintResults();
-        //    Clean();
-        //}
-
-        private void BuildAll(List<string> paths)
+        private void BuildAllTest(List<string> uniquePaths)
         {
-            //Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "coutinho" && pl.Rating == 86);
-            //Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-            //if(playerPosition == null)
-            //{
-            //    //NOT IN THIS POSITION
-            //    return;
-            //}
-
-            //BuildPermutations permutations = new BuildPermutations();
-            //permutations.Build("ABCDEFGHIJK");
-            //var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString())).ToList();
-            //iterations.Shuffle();
-            //Console.WriteLine("TENTATIVES: " + iterations.Count());
-
-            for (int pi = 0; pi < players.Count(); pi++)
+            var player = this.players.FirstOrDefault(pl => pl.Name.ToLower() == "diego costa" && pl.Rating == 86);
+            var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+            if (playerPosition == null)
             {
-                var player = players.ElementAt(pi);
-                Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+                //NOT IN THIS POSITION
+                return;
+            }
+
+            var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
+            int count = 0;
+            Console.WriteLine("Will iterate [" + permutations.Count() + "] times");
+            for (var i = 0; i < permutations.Count(); i++)
+            {
+                var permutation = permutations.ElementAt(i);
+
+                BuildByPermutation(permutation, 0, player);
+
+                //if (count == 100)
+                //{
+                //    count = 0;
+                Console.Write("[" + i + "]");
+                //}
+                //count++;
+
+                // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
+                var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+                if (allPlayers.Count() < 11)
+                {
+                    Clean();
+                    continue;
+                }
+
+                AddToResults(player.Name, permutation);
+                PrintResults(permutation);
+                Clean();
+            }
+            Console.WriteLine();
+        }
+
+        private void BuildAll(List<string> uniquePaths)
+        {
+            for (var pi = 0; pi < players.Count(); pi++)
+            {
+                var player = this.players.ElementAt(pi);
+                var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+                Console.WriteLine("--------------------------- [" + player.Position + "]" + player.Name + " - [" + pi + "] --------------------------- ");
                 if (playerPosition == null)
                 {
                     continue;
                 }
 
-                int count = 0;
-                for (int i = 0; i < paths.Count(); i++)
+                //var count = 0;
+                var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
+
+                Console.WriteLine("Will iterate [" + permutations.Count() + "] times");
+                for (var i = 0; i < permutations.Count(); i++)
                 {
-                    var permutation = paths.ElementAt(i);
+                    var permutation = permutations.ElementAt(i);
 
+                    Console.Write("[" + i + "]");
+                    //if (count == 100)
+                    //{
+                    //    count = 0;
+                    Console.Write("[" + i + "]");
+                    //}
+                    //count++;
 
-                    if(count == 100)
-                    {
-                        count = 0;
-                        // ESTOU PARANDO AQUI PORQUE ESTA LENTO
-                        //break;
-                        Console.WriteLine("Iteration: " + i + " - " + permutation);
-                    }
-                    count++;
+                    this.BuildByPermutation(permutation, 0, player);
 
-                    BuildByPermutation(permutation, 0, player);
-                
                     // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
-                    var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+                    var allPlayers = this.formation.Positions.Where(pos => pos.Player != null);
                     if (allPlayers.Count() < 11)
                     {
-                        Clean();
+                        this.Clean();
                         continue;
                     }
 
-                    Console.WriteLine("------------------[" + permutation + "]-------------------------");
-                    PrintResults();
-                    Clean();
+                    this.AddToResults(player.Name, permutation);
+                    this.PrintResults(permutation);
+                    this.Clean();
                 }
-
-                if (result.Squads.Any())
-                {
-                    //SAVING TO JSON
-                    var toSave = JsonConvert.SerializeObject(result);
-
-                    Directory.CreateDirectory(PathResults);
-                    File.WriteAllText(string.Format("{0}/{1}.json", PathResults, player.Name), toSave);
-                }
-                else
-                {
-                    Console.WriteLine("Could not create a squad for: [" + pi + "] " + player.Name);
-                }
+                Console.WriteLine();
 
             }
+
+            if (!this.result.Squads.Any())
+            {
+                return;
+            }
+
+            // SAVING TO JSON
+            var toSave = JsonConvert.SerializeObject(this.result);
+            Directory.CreateDirectory(PathResults);
+            File.WriteAllText(string.Format("{0}/{1}.json", PathResults, this.formation.Pattern), toSave);
         }
 
         private string BuildByPermutation(string permutation, int indexNumber, Player player)
@@ -189,9 +186,9 @@ namespace FifaBestSquad
                 var usedPlayers = formation.Positions.Where(pos => pos.Player != null).Select(pos => pos.Player).Select(pl => pl.BaseId);
                 var nextPlayer = players.FirstOrDefault(p => p.Position == nextPosition.PositionEnum &&
                                                              !alreadyTested.Contains(p.BaseId) &&
-                                                             !usedPlayers.Contains(p.BaseId) && 
+                                                             !usedPlayers.Contains(p.BaseId) &&
                                                              p.IsAnyGreen(tiedPlayers));
-                
+
                 if (nextPlayer == null)
                 {
                     position.Player = null;
@@ -218,46 +215,9 @@ namespace FifaBestSquad
             return nextPlayer;
         }
 
-        private void Build()
-        {
-            BuildPermutations permutations = new BuildPermutations();
-            permutations.Build("ABCDEFGHIJK");
-
-            foreach (var permutation in permutations.results)
-            {
-
-                foreach (char index in permutation)
-                {
-                    var player = SetupByIndex(index);
-                    if (player == null)
-                    {
-                        break;
-                    }
-                    Console.WriteLine(player.Name);
-                }
-
-                Console.WriteLine("------------------[" + permutation + "]-------------------------");
-                var allPlayers = formation.Positions.Where(pos => pos.Player != null);
-                if (allPlayers.Count() < 11)
-                {
-                    Clean();
-                    Console.WriteLine("DID NOT FIND A SQUAD");
-                    continue;
-                }
-
-                PrintResults();
-
-                // Cleaning
-                Clean();
-
-                Console.ReadLine();
-            }
-        }
-
-        private void PrintResults()
+        private void AddToResults(string basePlayer, string permutation)
         {
             Squad squad = new Squad();
-            // CONSOLE.WRITE RESULTS
             var soma = 0;
             foreach (var pos in this.formation.Positions)
             {
@@ -270,12 +230,27 @@ namespace FifaBestSquad
                     });
 
                     soma = soma + pos.Player.Rating;
+                }
+            }
+            squad.Rating = soma / 11;
+            squad.BasePlayer = basePlayer;
+            squad.Permutation = permutation;
+            this.result.Squads.Add(squad);
+        }
+
+        private void PrintResults(string permutation)
+        {
+            Console.WriteLine("------------------[" + permutation + "]-------------------------");
+            var soma = 0;
+            foreach (var pos in this.formation.Positions)
+            {
+                if (pos.Player != null)
+                {
+                    soma = soma + pos.Player.Rating;
                     Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
                 }
             }
             Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
-            squad.Rating = soma / 11;
-            result.Squads.Add(squad);
         }
 
         private void Clean()
@@ -286,62 +261,12 @@ namespace FifaBestSquad
             }
         }
 
-        private Player SetupByIndex(char index)
-        {
-            var position = formation.Positions.First(p => p.Index == index);
-            var tiedPlayers = position.TiedPositions.Where(tp => tp.Player != null).Select(tp => tp.Player);
-            var usedPlayers = formation.Positions.Where(pos => pos.Player != null).Select(pos => pos.Player).Select(pl => pl.BaseId);
-            position.Player = players.FirstOrDefault(p => p.Position == position.PositionEnum && !usedPlayers.Contains(p.BaseId) && p.IsAnyGreen(tiedPlayers));
-
-
-            return position.Player;
-        }
-
-        private void BuildOrder()
-        {
-
-            foreach (var position in this.formation.Positions)
-            {
-
-                List<char> charList = new List<char>();
-                this.SetupOrder(position, charList);
-                position.Paths.Add(charList);
-
-                // LOGGING
-                foreach (var item in charList)
-                {
-                    Console.Write(item);
-                }
-                Console.WriteLine("-------------------");
-
-                // Cleaning
-                foreach (var pos in this.formation.Positions)
-                {
-                    pos.Visited = false;
-                }
-
-            }
-        }
-
-
-
-        private void SetupOrder(Position position, List<char> stack)
-        {
-            stack.Add(position.Index);
-            position.Visited = true;
-
-            var nextPosition = position.TiedPositions.FirstOrDefault(tp => !tp.Visited);
-            if (nextPosition == null)
-            {
-                return;
-            }
-
-            this.SetupOrder(nextPosition, stack);
-        }
-
 
         private void SetPlayersToMemory()
         {
+
+            Console.WriteLine("Bring all players to memory - START");
+
             this.players = new List<Player>();
 
             DirectoryInfo d = new DirectoryInfo(Path);
@@ -355,7 +280,6 @@ namespace FifaBestSquad
                         string line = sr.ReadToEnd();
                         var root = JsonConvert.DeserializeObject<RootObject>(line);
 
-                        //List<string> playerTypes = new List<string>();
                         foreach (var item in root.items)
                         {
 
@@ -365,11 +289,6 @@ namespace FifaBestSquad
                             {
                                 Console.WriteLine(item.position);
                             }
-
-                            //if(!playerTypes.Contains(item.playerType))
-                            //{
-                            //    playerTypes.Add(item.playerType);
-                            //}
 
                             this.players.Add(new Player
                             {
@@ -383,11 +302,6 @@ namespace FifaBestSquad
                                 IsSpecialType = item.isSpecialType
                             });
                         }
-
-                        //foreach (var playerType in playerTypes)
-                        //{
-                        //    Console.WriteLine(playerType);
-                        //}
                     }
                 }
                 catch (Exception e)
@@ -397,6 +311,8 @@ namespace FifaBestSquad
                 }
 
             }
+
+            Console.WriteLine("Bring all players to memory - DONE");
         }
 
         private static void GetFromPlayersFromEa()

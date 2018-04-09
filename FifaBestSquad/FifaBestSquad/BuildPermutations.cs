@@ -25,7 +25,7 @@ namespace FifaBestSquad
             GetPer(arr);
 
             stopWatch.Stop();
-            Console.WriteLine("First Permutation" + results.FirstOrDefault());
+            Console.WriteLine("First Permutation: " + results.FirstOrDefault());
             Console.WriteLine("Last Permutation: " + results.LastOrDefault());
             Console.WriteLine("Done building permutations. Iterations: " + sum);
             Console.WriteLine("TEMPO TOTAL LEVADO:" + Math.Round(stopWatch.Elapsed.TotalSeconds) + " segundos");
