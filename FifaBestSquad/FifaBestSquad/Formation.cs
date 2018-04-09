@@ -62,10 +62,12 @@ namespace FifaBestSquad
             cb1.TiedPositions.Add(gk);
             cb1.TiedPositions.Add(cb2);
             cb1.TiedPositions.Add(lb);
+            cb1.TiedPositions.Add(cm1);
 
             cb2.TiedPositions.Add(gk);
             cb2.TiedPositions.Add(cb1);
             cb2.TiedPositions.Add(rb);
+            cb2.TiedPositions.Add(cm2);
 
             rb.TiedPositions.Add(cb2);
             rb.TiedPositions.Add(rw);

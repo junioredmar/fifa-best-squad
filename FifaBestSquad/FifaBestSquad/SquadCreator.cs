@@ -30,9 +30,14 @@ namespace FifaBestSquad
 
         private List<Queue<char>> positionQueues;
 
+        private const string PathResults = "../../results";
+
+        private FormationViewModel result;
+
 
         public void BuildPerfectSquad()
         {
+            result = new FormationViewModel();
             //GetFromPlayersFromEa();
 
             SetPlayersToMemory();
@@ -42,8 +47,8 @@ namespace FifaBestSquad
 
         private void BuildSquad()
         {
-            //this.players = this.players.Where(p => p.Club != "Icons" && p.Rating > 78 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
-            this.players = this.players.Where(p => p.Club != "Icons" && p.League.ToLower().StartsWith("pre")).ToList();
+            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
+            //this.players = this.players.Where(p => p.Club != "Icons" && p.League.ToLower().StartsWith("pre") ).ToList();
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
             this.formation = new Formation("4-3-3");
 
@@ -53,38 +58,38 @@ namespace FifaBestSquad
 
             this.BuildAll();
 
+
             //this.BuildAllTest();
 
-            this.PrintResults();
         }
 
-        private void BuildAllTest()
-        {
-            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
-            Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-            if (playerPosition == null)
-            {
-                //NOT IN THIS POSITION
-                return;
-            }
+        //private void BuildAllTest()
+        //{
+        //    Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
+        //    Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+        //    if (playerPosition == null)
+        //    {
+        //        //NOT IN THIS POSITION
+        //        return;
+        //    }
 
-            BuildByPermutation("ABCDEFGIHJK", 0, player);
+        //    BuildByPermutation("ABCDEFGIHJK", 0, player);
 
-            // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
-            var allPlayers = formation.Positions.Where(pos => pos.Player != null);
-            if (allPlayers.Count() < 11)
-            {
-                Clean();
-                return;
-            }
+        //    // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
+        //    var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+        //    if (allPlayers.Count() < 11)
+        //    {
+        //        Clean();
+        //        return;
+        //    }
             
-            PrintResults();
-            Clean();
-        }
+        //    PrintResults();
+        //    Clean();
+        //}
 
         private void BuildAll()
         {
-            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "morata" && pl.Rating == 85);
+            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "coutinho" && pl.Rating == 86);
             Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
             if(playerPosition == null)
             {
@@ -99,7 +104,9 @@ namespace FifaBestSquad
 
             /* var position = formation.Positions.FirstOrDefault(pos => pos.Index == permutation[0]);
             var player = players.FirstOrDefault(pl => pl.Position == position.PositionEnum); */
-            var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString()));
+            var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString())).ToList();
+
+            iterations.Shuffle();
             Console.WriteLine("TENTATIVES: " + iterations.Count());
 
             int count = 0;
@@ -107,14 +114,13 @@ namespace FifaBestSquad
             {
                 var permutation = iterations.ElementAt(i);
 
-                // CONSOLE WRITE AT 100
-                if(count == 0)
-                {
-                    Console.WriteLine("Iteration: " + i + " - " + permutation);
-                }
+
                 if(count == 100)
                 {
                     count = 0;
+                    // ESTOU PARANDO AQUI PORQUE ESTA LENTO
+                    //break;
+                    Console.WriteLine("Iteration: " + i + " - " + permutation);
                 }
                 count++;
 
@@ -132,6 +138,12 @@ namespace FifaBestSquad
                 PrintResults();
                 Clean();
             }
+
+            //SAVING TO JSON
+            var toSave = JsonConvert.SerializeObject(result);
+
+            Directory.CreateDirectory(PathResults);
+            File.WriteAllText(string.Format("{0}/{1}.json", PathResults, player.Name), toSave);
         }
 
         private string BuildByPermutation(string permutation, int indexNumber, Player player)
@@ -231,24 +243,33 @@ namespace FifaBestSquad
 
         private void PrintResults()
         {
+            Squad squad = new Squad();
             // CONSOLE.WRITE RESULTS
             var soma = 0;
             foreach (var pos in this.formation.Positions)
             {
                 if (pos.Player != null)
                 {
+                    squad.Cards.Add(new Card
+                    {
+                        PositionEnum = pos.PositionEnum,
+                        Player = pos.Player
+                    });
+
                     soma = soma + pos.Player.Rating;
                     Console.WriteLine("[" + pos.Player.Rating + "][" + pos.PositionEnum + "] " + pos.Player.Name);
                 }
             }
             Console.WriteLine("Rating Geral: [" + (soma / 11) + "]");
+            squad.Rating = soma / 11;
+            result.Squads.Add(squad);
         }
 
         private void Clean()
         {
             foreach (var pos in this.formation.Positions)
             {
-                pos.Visited = false;
+                pos.Player = null;
             }
         }
 
@@ -321,7 +342,7 @@ namespace FifaBestSquad
                         string line = sr.ReadToEnd();
                         var root = JsonConvert.DeserializeObject<RootObject>(line);
 
-
+                        //List<string> playerTypes = new List<string>();
                         foreach (var item in root.items)
                         {
 
@@ -332,6 +353,11 @@ namespace FifaBestSquad
                                 Console.WriteLine(item.position);
                             }
 
+                            //if(!playerTypes.Contains(item.playerType))
+                            //{
+                            //    playerTypes.Add(item.playerType);
+                            //}
+
                             this.players.Add(new Player
                             {
                                 BaseId = item.baseId,
@@ -340,9 +366,15 @@ namespace FifaBestSquad
                                 League = item.league != null ? item.league.name : string.Empty,
                                 Nation = item.nation != null ? item.nation.name : string.Empty,
                                 Position = itemPosition,
-                                Rating = item.rating
+                                Rating = item.rating,
+                                IsSpecialType = item.isSpecialType
                             });
                         }
+
+                        //foreach (var playerType in playerTypes)
+                        //{
+                        //    Console.WriteLine(playerType);
+                        //}
                     }
                 }
                 catch (Exception e)
