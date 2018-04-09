@@ -14,10 +14,10 @@ namespace FifaBestSquadMain
             Console.WriteLine("Test");
 
             UniquePathCreator uniquePathCreator = new UniquePathCreator();
-            uniquePathCreator.CreateUniquePath();
+            var paths = uniquePathCreator.CreateUniquePath();
 
-            //SquadCreator analyzer = new SquadCreator
-            //analyzer.BuildPerfectSquad();
+            SquadCreator analyzer = new SquadCreator();
+            analyzer.BuildPerfectSquad(paths);
 
             Console.ReadLine();
         }

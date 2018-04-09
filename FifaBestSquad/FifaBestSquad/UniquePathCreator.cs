@@ -14,11 +14,16 @@ namespace FifaBestSquad
 
         private const string PathResults = "../../uniquePaths";
 
-        public void CreateUniquePath()
+        private List<string> uniquePaths;
+
+        public List<string> CreateUniquePath()
         {
             this.formation = new Formation("4-3-3");
 
+            uniquePaths = new List<string>();
             this.GetUniques();
+
+            return uniquePaths;
         }
 
         private void GetUniques()
@@ -26,7 +31,6 @@ namespace FifaBestSquad
             BuildPermutations permutations = new BuildPermutations();
             permutations.Build("ABCDEFGHIJK");
 
-            List<string> uniquePaths = new List<string>();
             foreach (var permutation in permutations.results)
             {
                 if (IsUnique(permutation))

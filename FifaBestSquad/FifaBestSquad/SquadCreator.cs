@@ -35,19 +35,20 @@ namespace FifaBestSquad
         private FormationViewModel result;
 
 
-        public void BuildPerfectSquad()
+        public void BuildPerfectSquad(List<string> paths)
         {
             result = new FormationViewModel();
             //GetFromPlayersFromEa();
 
             SetPlayersToMemory();
 
-            BuildSquad();
+            BuildSquad(paths);
         }
 
-        private void BuildSquad()
+        private void BuildSquad(List<string> paths)
         {
-            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
+            //this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
+            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86).ToList();
             //this.players = this.players.Where(p => p.Club != "Icons" && p.League.ToLower().StartsWith("pre") ).ToList();
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
             this.formation = new Formation("4-3-3");
@@ -56,7 +57,7 @@ namespace FifaBestSquad
 
             //this.Build();
 
-            this.BuildAll();
+            this.BuildAll(paths);
 
 
             //this.BuildAllTest();
@@ -87,63 +88,75 @@ namespace FifaBestSquad
         //    Clean();
         //}
 
-        private void BuildAll()
+        private void BuildAll(List<string> paths)
         {
-            Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "coutinho" && pl.Rating == 86);
-            Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-            if(playerPosition == null)
+            //Player player = players.FirstOrDefault(pl => pl.Name.ToLower() == "coutinho" && pl.Rating == 86);
+            //Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+            //if(playerPosition == null)
+            //{
+            //    //NOT IN THIS POSITION
+            //    return;
+            //}
+
+            //BuildPermutations permutations = new BuildPermutations();
+            //permutations.Build("ABCDEFGHIJK");
+            //var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString())).ToList();
+            //iterations.Shuffle();
+            //Console.WriteLine("TENTATIVES: " + iterations.Count());
+
+            for (int pi = 0; pi < players.Count(); pi++)
             {
-                //NOT IN THIS POSITION
-                return;
-            }
-            //string permutation = "KJGBACHIED";
-            //string permutation = "ACHIKJGBFDE";
-
-            BuildPermutations permutations = new BuildPermutations();
-            permutations.Build("ABCDEFGHIJK");
-
-            /* var position = formation.Positions.FirstOrDefault(pos => pos.Index == permutation[0]);
-            var player = players.FirstOrDefault(pl => pl.Position == position.PositionEnum); */
-            var iterations = permutations.results.Where(r => r.StartsWith(playerPosition.Index.ToString())).ToList();
-
-            iterations.Shuffle();
-            Console.WriteLine("TENTATIVES: " + iterations.Count());
-
-            int count = 0;
-            for (int i = 0; i < iterations.Count(); i++)
-            {
-                var permutation = iterations.ElementAt(i);
-
-
-                if(count == 100)
+                var player = players.ElementAt(pi);
+                Position playerPosition = formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
+                if (playerPosition == null)
                 {
-                    count = 0;
-                    // ESTOU PARANDO AQUI PORQUE ESTA LENTO
-                    //break;
-                    Console.WriteLine("Iteration: " + i + " - " + permutation);
-                }
-                count++;
-
-                BuildByPermutation(permutation, 0, player);
-                
-                // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
-                var allPlayers = formation.Positions.Where(pos => pos.Player != null);
-                if (allPlayers.Count() < 11)
-                {
-                    Clean();
                     continue;
                 }
 
-                Console.WriteLine("------------------[" + permutation + "]-------------------------");
-                PrintResults();
-                Clean();
+                int count = 0;
+                for (int i = 0; i < paths.Count(); i++)
+                {
+                    var permutation = paths.ElementAt(i);
+
+
+                    if(count == 100)
+                    {
+                        count = 0;
+                        // ESTOU PARANDO AQUI PORQUE ESTA LENTO
+                        //break;
+                        Console.WriteLine("Iteration: " + i + " - " + permutation);
+                    }
+                    count++;
+
+                    BuildByPermutation(permutation, 0, player);
+                
+                    // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
+                    var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+                    if (allPlayers.Count() < 11)
+                    {
+                        Clean();
+                        continue;
+                    }
+
+                    Console.WriteLine("------------------[" + permutation + "]-------------------------");
+                    PrintResults();
+                    Clean();
+                }
+
+                if (result.Squads.Any())
+                {
+                    //SAVING TO JSON
+                    var toSave = JsonConvert.SerializeObject(result);
+
+                    Directory.CreateDirectory(PathResults);
+                    File.WriteAllText(string.Format("{0}/{1}.json", PathResults, player.Name), toSave);
+                }
+                else
+                {
+                    Console.WriteLine("Could not create a squad for: [" + pi + "] " + player.Name);
+                }
+
             }
-
-            //SAVING TO JSON
-            var toSave = JsonConvert.SerializeObject(result);
-
-            Directory.CreateDirectory(PathResults);
-            File.WriteAllText(string.Format("{0}/{1}.json", PathResults, player.Name), toSave);
         }
 
         private string BuildByPermutation(string permutation, int indexNumber, Player player)
