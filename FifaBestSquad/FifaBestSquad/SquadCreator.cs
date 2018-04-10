@@ -48,7 +48,7 @@ namespace FifaBestSquad
         private void BuildSquad(List<string> permutations)
         {
             //this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
-            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86).ToList();
+            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 79 && p.Rating <= 87 && p.League.ToLower().StartsWith("pre")).ToList();
             this.players = this.players.OrderByDescending(p => p.Rating).ToList();
             this.formation = new Formation("4-3-3");
 
@@ -119,7 +119,6 @@ namespace FifaBestSquad
                 {
                     var permutation = permutations.ElementAt(i);
 
-                    Console.Write("[" + i + "]");
                     //if (count == 100)
                     //{
                     //    count = 0;
