@@ -9,7 +9,7 @@ using System.Text;
 
 namespace FifaBestSquad
 {
-
+    using System.Diagnostics;
 
     //    A    
     //C       B
@@ -35,96 +35,99 @@ namespace FifaBestSquad
         private FormationViewModel result;
 
 
-        public void BuildPerfectSquad(List<string> permutations)
+        public void BuildPerfectSquad(Formation formation, List<string> permutations)
         {
             this.result = new FormationViewModel();
+            this.formation = formation;
             // this.GetFromPlayersFromEa();
-
             this.SetPlayersToMemory();
+
+            //EDMAR - ALL PLAYERS MUST COME FROM ABOVE
+            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 75 && p.Rating <= 89 && p.League.ToLower().StartsWith("pre")).ToList();
+
+            // Removing players that have positions that are not in this formation
+            var allPositions = this.formation.Positions.Select(pos => pos.PositionEnum).Distinct().ToList();
+            this.players = this.players.Where(pl => allPositions.Contains(pl.Position)).ToList();
+
+            this.players = this.players.OrderByDescending(p => p.Rating).ToList();
 
             this.BuildSquad(permutations);
         }
 
         private void BuildSquad(List<string> permutations)
         {
-            //this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 81 && p.Rating <= 86 && p.League.ToLower().StartsWith("pre")).ToList();
-            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 79 && p.Rating <= 87 && p.League.ToLower().StartsWith("pre")).ToList();
-            this.players = this.players.OrderByDescending(p => p.Rating).ToList();
-            this.formation = new Formation("4-3-3");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            Console.WriteLine("Building Perfect Squads...");
 
             this.BuildAll(permutations);
-
             // this.BuildAllTest(permutations);
 
+            stopWatch.Stop();
+            Console.WriteLine("DONE building perfect squads");
+            Console.WriteLine("TOTAL TIME SPENT:" + Math.Round(stopWatch.Elapsed.TotalSeconds) + " seconds");
         }
 
         private void BuildAllTest(List<string> uniquePaths)
         {
-            var player = this.players.FirstOrDefault(pl => pl.Name.ToLower() == "diego costa" && pl.Rating == 86);
+            var player = this.players.FirstOrDefault(pl => pl.Name.ToLower().Contains("jesus"));
             var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
             if (playerPosition == null)
             {
-                //NOT IN THIS POSITION
+                Console.WriteLine("No formation compatible");
                 return;
             }
 
             var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
-            int count = 0;
-            Console.WriteLine("Will iterate [" + permutations.Count() + "] times");
-            for (var i = 0; i < permutations.Count(); i++)
+            Console.WriteLine("Permutations: [" + permutations.Count() + "]");
+            int percentComplete = (int)Math.Round((double)permutations.Count() / 10);
+            Console.WriteLine("Iterates: [" + percentComplete + "] times");
+            for (var i = 0; i < percentComplete; i++)
             {
                 var permutation = permutations.ElementAt(i);
 
-                BuildByPermutation(permutation, 0, player);
+                this.BuildByPermutation(permutation, 0, player);
 
-                //if (count == 100)
-                //{
-                //    count = 0;
                 Console.Write("[" + i + "]");
-                //}
-                //count++;
 
                 // IF NOT 11 POSITIONS = CLEAN AND CONTINUE
-                var allPlayers = formation.Positions.Where(pos => pos.Player != null);
+                var allPlayers = this.formation.Positions.Where(pos => pos.Player != null);
                 if (allPlayers.Count() < 11)
                 {
-                    Clean();
+                    this.Clean();
                     continue;
                 }
 
-                AddToResults(player.Name, permutation);
-                PrintResults(permutation);
-                Clean();
+                this.AddToResults(player.Name, permutation);
+                this.PrintResults(permutation);
+                this.Clean();
             }
+            this.SaveToJson();
             Console.WriteLine();
         }
 
         private void BuildAll(List<string> uniquePaths)
         {
-            for (var pi = 0; pi < players.Count(); pi++)
+            Console.WriteLine("Players amount: " + this.players.Count);
+            for (var pi = 0; pi < this.players.Count(); pi++)
             {
                 var player = this.players.ElementAt(pi);
                 var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-                Console.WriteLine("--------------------------- [" + player.Position + "]" + player.Name + " - [" + pi + "] --------------------------- ");
+                Console.WriteLine("--------------------------- [" + player.Position + "][" + player.Rating + "]" + player.Name + " - [" + pi + "] --------------------------- ");
                 if (playerPosition == null)
                 {
                     continue;
                 }
 
-                //var count = 0;
                 var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
-
-                Console.WriteLine("Will iterate [" + permutations.Count() + "] times");
-                for (var i = 0; i < permutations.Count(); i++)
+                Console.WriteLine("Permutations: [" + permutations.Count() + "]");
+                var percentComplete = (int)Math.Round(((double)10 / 100) * permutations.Count());
+                Console.WriteLine("Iterates: [" + percentComplete + "] times");
+                for (var i = 0; i < percentComplete; i++)
                 {
                     var permutation = permutations.ElementAt(i);
 
-                    //if (count == 100)
-                    //{
-                    //    count = 0;
                     Console.Write("[" + i + "]");
-                    //}
-                    //count++;
 
                     this.BuildByPermutation(permutation, 0, player);
 
@@ -149,6 +152,11 @@ namespace FifaBestSquad
                 return;
             }
 
+            this.SaveToJson();
+        }
+
+        private void SaveToJson()
+        {
             // SAVING TO JSON
             var toSave = JsonConvert.SerializeObject(this.result);
             Directory.CreateDirectory(PathResults);
@@ -231,6 +239,12 @@ namespace FifaBestSquad
                     soma = soma + pos.Player.Rating;
                 }
             }
+
+            if (this.result.Squads.Contains(squad))
+            {
+                return;
+            }
+
             squad.Rating = soma / 11;
             squad.BasePlayer = basePlayer;
             squad.Permutation = permutation;
@@ -291,6 +305,7 @@ namespace FifaBestSquad
 
                             this.players.Add(new Player
                             {
+                                Id = item.id,
                                 BaseId = item.baseId,
                                 Name = item.name,
                                 Club = item.club.name,

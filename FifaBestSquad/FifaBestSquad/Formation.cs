@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace FifaBestSquad
 {
-    internal class Formation
+    public class Formation
     {
 
         public Formation(string formationPattern)
@@ -20,7 +20,32 @@ namespace FifaBestSquad
         public string Pattern { get; set; }
 
         public List<Position> Positions { get; set; }
-        
+
+        //edmar - remove it
+        //public override bool Equals(object obj)
+        //{
+        //    Formation other = obj as Formation;
+        //    if (other == null)
+        //    {
+        //        return false;
+        //    }
+
+        //    foreach (var card in this.Positions)
+        //    {
+        //        if (!other.Positions.Contains(card))
+        //        {
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    return this.Positions.GetHashCode();
+        //}
+
         //    _    
         //_       _
         //    _    

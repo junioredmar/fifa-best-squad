@@ -16,48 +16,48 @@ namespace FifaBestSquad
 
         private List<string> uniquePaths;
 
-        public List<string> CreateUniquePath()
+        public List<string> CreateUniquePath(Formation formation)
         {
-            Console.WriteLine("Building unique paths - START");
-            this.formation = new Formation("4-3-3");
+            this.formation = formation;
 
-            uniquePaths = new List<string>();
-
-            if (GotFromJson(formation.Pattern))
+            this.uniquePaths = new List<string>();
+            if (this.GotFromJson(formation.Pattern))
             {
-                return uniquePaths;
+                return this.uniquePaths;
             }
+
+            Console.WriteLine("Building unique paths - START");
 
             this.GetUniques();
 
             Console.WriteLine("Building unique paths - DONE ");
 
-            return uniquePaths;
+            return this.uniquePaths;
         }
 
         private void GetUniques()
         {
 
-            BuildPermutations permutations = new BuildPermutations();
+            var permutations = new BuildPermutations();
             permutations.Build("ABCDEFGHIJK");
 
             foreach (var permutation in permutations.results)
             {
-                if (IsUnique(permutation))
+                if (this.IsUnique(permutation))
                 {
-                    uniquePaths.Add(permutation);
+                    this.uniquePaths.Add(permutation);
                 }
             }
             Console.WriteLine("DONE");
 
             //SAVING TO JSON
-            var toSave = JsonConvert.SerializeObject(uniquePaths);
+            var toSave = JsonConvert.SerializeObject(this.uniquePaths);
             Directory.CreateDirectory(PathUnique);
-            File.WriteAllText(string.Format("{0}/{1}.json", PathUnique, formation.Pattern), toSave);
+            File.WriteAllText(string.Format("{0}/{1}.json", PathUnique, this.formation.Pattern), toSave);
         }
 
 
-        public bool GotFromJson(string formation)
+        private bool GotFromJson(string formation)
         {
             DirectoryInfo d = new DirectoryInfo(PathUnique);
 
@@ -65,10 +65,10 @@ namespace FifaBestSquad
             {
                 try
                 {
-                    using (StreamReader sr = new StreamReader(PathUnique + "/" + file.Name))
+                    using (var sr = new StreamReader(PathUnique + "/" + file.Name))
                     {
-                        string line = sr.ReadToEnd();
-                        uniquePaths = JsonConvert.DeserializeObject<List<string>>(line);
+                        var line = sr.ReadToEnd();
+                        this.uniquePaths = JsonConvert.DeserializeObject<List<string>>(line);
                     }
 
                     if (this.uniquePaths.Any())
@@ -90,9 +90,9 @@ namespace FifaBestSquad
         private bool IsUnique(string permutation)
         {
 
-            for (int i = 0; i < permutation.Count(); i++)
+            for (var i = 0; i < permutation.Count(); i++)
             {
-                var position = formation.Positions.FirstOrDefault(pos => pos.Index == permutation[i]);
+                var position = this.formation.Positions.FirstOrDefault(pos => pos.Index == permutation[i]);
                 if (permutation.Count() <= i + 1)
                 {
                     return true;

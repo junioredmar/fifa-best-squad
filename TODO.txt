@@ -1,21 +1,14 @@
-- Colocar o Base Player no squad
-- Colocar o permutation no squad
-- Remover a Formation - Todos os jsons estao iguais (Salvar somente uma vez)
-- Comparar os squads
+- Colocar o Base Player no squad - OK 
+- Colocar o permutation no squad - OK
+- Comparar os squads - OK
+- Randomizar os unique path antes de salvar
+- Verificar se precisa mesmo rodar diversos caminhos para o mesmo jogador
+  - Talvez existam caminhos (nao-unicos) que podem gerar squads que nao existem
+  - Mas pode ser que se rodarmos uma vez somente o caminho (ou 10%) ja é suficiente
+  - Para isso, devo fazer um filtro grande, um pequeno e comparar os testes executados
+- [BUG] Ainda ta pegando squad igual
+- [BUG] Ainda ta pegando carta especial
 
-- Analisar esse resultado: (Alderweireld - LW ???)
-Squad Rating: [84]
-[ST][86] Kane
-[RW][86] Sterling
-[LW][86] Alderweireld
-[CAM][86] Alli
-[CM][82] Dembélé
-[CM][84] Rooney
-[RB][82] Clyne
-[LB][82] Rose
-[CB][82] Dier
-[CB][86] Walker
-[GK][82] Hart
 
     _    
 _       _
@@ -33,4 +26,7 @@ C       B
 H       G
   I   J  
     K    
+
+
+
 

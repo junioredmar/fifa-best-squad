@@ -8,6 +8,8 @@ namespace FifaBestSquad
 {
     public class Player
     {
+        public string Id { get; set; }
+
         public int BaseId { get; set; }
 
         public string Name { get; set; }

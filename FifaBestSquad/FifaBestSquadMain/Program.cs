@@ -11,52 +11,63 @@ namespace FifaBestSquadMain
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Test");
+            Console.WriteLine("STARTED");
 
-            //UniquePathCreator uniquePathCreator = new UniquePathCreator();
-            //var permutations = uniquePathCreator.CreateUniquePath();
+            //var formation = new Formation("4-3-3");
 
-            //SquadCreator analyzer = new SquadCreator();
-            //analyzer.BuildPerfectSquad(permutations);
+            //var uniquePathCreator = new UniquePathCreator();
+            //var permutations = uniquePathCreator.CreateUniquePath(formation);
 
-            ResultChecker resultChecker = new ResultChecker();
+            //var analyzer = new SquadCreator();
+            //analyzer.BuildPerfectSquad(formation, permutations);
+
+            var resultChecker = new ResultChecker();
             var result = resultChecker.GetResults();
             PrintResults(result);
 
+            Console.WriteLine("FINISHED");
             Console.ReadLine();
         }
 
         private static void PrintResults(FormationViewModel result)
         {
             var allSquads = result.Squads;
-            allSquads = allSquads.OrderByDescending(s => s.Rating).ToList();
-            Console.WriteLine("------------------------- TOP SQUADS -------------------------");
-            for (int i = 0; i < 10; i++)
+            if (allSquads == null || !allSquads.Any())
             {
-                var squad = allSquads.ElementAt(i);
-                Console.WriteLine("------------------------- Squad Rating: [" + squad.Rating + "]");
-                foreach (var card in squad.Cards)
+                Console.WriteLine("No results found");
+                return;
+            }
+
+            allSquads = allSquads.OrderByDescending(s => s.Rating).ToList();
+
+            foreach (var squad in allSquads)
+            {
+                var bestPlayers = squad.Cards.Where(c => c.Player.Rating > 88).ToList();
+                var terriblePlayers = squad.Cards.Where(c => c.Player.Rating < 80).ToList();
+                
+                if (!terriblePlayers.Any())
                 {
-                    Console.WriteLine("[" + card.PositionEnum + "][" + card.Player.Rating + "] " + card.Player.Name);
+                    Console.WriteLine("------------------------- Squad Rating: [" + squad.Rating + "]");
+                    foreach (var card in squad.Cards)
+                    {
+                        Console.WriteLine("[" + card.PositionEnum + "][" + card.Player.Rating + "] " + card.Player.Name);
+                    }
                 }
             }
 
-            //var premierSquads = allSquads.Where(s => s.Cards.Any(c => c.Player.League.ToLower().StartsWith("premier")));
-            //Console.WriteLine(
-            //    "------------------------- Premier League Squads [" + premierSquads.Count() + "]-------------------------");
-            //foreach (var squad in premierSquads)
-            //{
-            //    if (squad.Rating < 83)
-            //    {
-            //        continue;
-            //    }
 
+            //allSquads = allSquads.Where(s => s.Rating == 84).ToList();
+            //Console.WriteLine("------------------------- Printing results got from json [" + allSquads.Count() + "] -------------------------");
+            //for (int i = 0; i < allSquads.Count(); i++)
+            //{
+            //    var squad = allSquads.ElementAt(i);
             //    Console.WriteLine("------------------------- Squad Rating: [" + squad.Rating + "]");
             //    foreach (var card in squad.Cards)
             //    {
             //        Console.WriteLine("[" + card.PositionEnum + "][" + card.Player.Rating + "] " + card.Player.Name);
             //    }
             //}
+
         }
     }
 }
