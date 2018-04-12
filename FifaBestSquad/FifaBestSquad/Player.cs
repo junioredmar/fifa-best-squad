@@ -25,5 +25,7 @@ namespace FifaBestSquad
         public PositionEnum Position { get; set; }
 
         public bool IsSpecialType { get; set; }
+
+        public string Color { get; set; }
     }
 }

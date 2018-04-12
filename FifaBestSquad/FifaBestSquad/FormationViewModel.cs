@@ -39,17 +39,25 @@ namespace FifaBestSquad
                 return false;
             }
 
-            for (var i = 0; i < this.Cards.Count(); i++)
+            var playersSum = this.Cards.Sum(c => c.Player.BaseId);
+            var otherPlayersSum = other.Cards.Sum(c => c.Player.BaseId);
+            if(playersSum != otherPlayersSum)
             {
-                var thisCard = this.Cards.ElementAt(i);
-                var otherCard = other.Cards.ElementAt(i);
-                if (otherCard == null || !otherCard.Equals(thisCard))
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
+            //for (var i = 0; i < this.Cards.Count(); i++)
+            //{
+            //    var thisCard = this.Cards.ElementAt(i);
+            //    var otherCard = other.Cards.ElementAt(i);
+            //    if (otherCard == null || !otherCard.Equals(thisCard))
+            //    {
+            //        return false;
+            //    }
+            //}
+
+            //return true;
         }
 
         public override int GetHashCode()
@@ -64,31 +72,31 @@ namespace FifaBestSquad
 
         public Player Player { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            Card other = obj as Card;
-            if (other == null)
-            {
-                return false;
-            }
+        //public override bool Equals(object obj)
+        //{
+        //    Card other = obj as Card;
+        //    if (other == null)
+        //    {
+        //        return false;
+        //    }
 
-            if (this.Player == null || other.Player == null)
-            {
-                return false;
-            }
+        //    if (this.Player == null || other.Player == null)
+        //    {
+        //        return false;
+        //    }
 
-            if (this.Player.Id == null || other.Player.Id == null)
-            {
-                return false;
-            }
+        //    if (this.Player.Id == null || other.Player.Id == null)
+        //    {
+        //        return false;
+        //    }
 
-            if (this.PositionEnum == other.PositionEnum && this.Player.Id.Equals(other.Player.Id))
-            {
-                return true;
-            }
+        //    if (this.PositionEnum == other.PositionEnum && this.Player.Id.Equals(other.Player.Id))
+        //    {
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public override int GetHashCode()
         {

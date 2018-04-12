@@ -43,7 +43,8 @@ namespace FifaBestSquad
             this.SetPlayersToMemory();
 
             //EDMAR - ALL PLAYERS MUST COME FROM ABOVE
-            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Rating > 75 && p.Rating <= 89 && p.League.ToLower().StartsWith("pre")).ToList();
+            //this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Color == "rare_gold" && p.Rating > 78 && p.League.ToLower().StartsWith("pre")).ToList();
+            this.players = this.players.Where(p => p.Club != "Icons" && !p.IsSpecialType && p.Color == "rare_gold" && p.Rating > 78 && p.Rating < 99).ToList();
 
             // Removing players that have positions that are not in this formation
             var allPositions = this.formation.Positions.Select(pos => pos.PositionEnum).Distinct().ToList();
@@ -61,7 +62,7 @@ namespace FifaBestSquad
             Console.WriteLine("Building Perfect Squads...");
 
             this.BuildAll(permutations);
-            // this.BuildAllTest(permutations);
+            //this.BuildAllTest(permutations);
 
             stopWatch.Stop();
             Console.WriteLine("DONE building perfect squads");
@@ -70,7 +71,7 @@ namespace FifaBestSquad
 
         private void BuildAllTest(List<string> uniquePaths)
         {
-            var player = this.players.FirstOrDefault(pl => pl.Name.ToLower().Contains("jesus"));
+            var player = this.players.FirstOrDefault(pl => pl.Name.ToLower().Contains("sterling"));
             var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
             if (playerPosition == null)
             {
@@ -78,10 +79,13 @@ namespace FifaBestSquad
                 return;
             }
 
-            var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
+            var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString())).ToList();
+            //permutations = new List<string>();
+            //permutations.Add("KIHEDFJGBAC");
             Console.WriteLine("Permutations: [" + permutations.Count() + "]");
             int percentComplete = (int)Math.Round((double)permutations.Count() / 10);
             Console.WriteLine("Iterates: [" + percentComplete + "] times");
+
             for (var i = 0; i < percentComplete; i++)
             {
                 var permutation = permutations.ElementAt(i);
@@ -108,26 +112,29 @@ namespace FifaBestSquad
 
         private void BuildAll(List<string> uniquePaths)
         {
+            CleanResultsFolder();
+
             Console.WriteLine("Players amount: " + this.players.Count);
+            //for (var pi = 0; pi < this.players.Count(); pi++)
             for (var pi = 0; pi < this.players.Count(); pi++)
             {
                 var player = this.players.ElementAt(pi);
                 var playerPosition = this.formation.Positions.FirstOrDefault(pos => pos.PositionEnum == player.Position);
-                Console.WriteLine("--------------------------- [" + player.Position + "][" + player.Rating + "]" + player.Name + " - [" + pi + "] --------------------------- ");
+                //Console.WriteLine("--------------------------- [" + player.Position + "][" + player.Rating + "]" + player.Name + " - [" + pi + "] --------------------------- ");
                 if (playerPosition == null)
                 {
                     continue;
                 }
 
                 var permutations = uniquePaths.Where(up => up.StartsWith(playerPosition.Index.ToString()));
-                Console.WriteLine("Permutations: [" + permutations.Count() + "]");
+                //Console.WriteLine("Permutations: [" + permutations.Count() + "]");
                 var percentComplete = (int)Math.Round(((double)10 / 100) * permutations.Count());
-                Console.WriteLine("Iterates: [" + percentComplete + "] times");
+                //Console.WriteLine("Iterates: [" + percentComplete + "] times");
                 for (var i = 0; i < percentComplete; i++)
                 {
                     var permutation = permutations.ElementAt(i);
 
-                    Console.Write("[" + i + "]");
+                    //Console.Write("[" + i + "]");
 
                     this.BuildByPermutation(permutation, 0, player);
 
@@ -140,10 +147,10 @@ namespace FifaBestSquad
                     }
 
                     this.AddToResults(player.Name, permutation);
-                    this.PrintResults(permutation);
+                    //this.PrintResults(permutation);
                     this.Clean();
                 }
-                Console.WriteLine();
+                //Console.WriteLine();
 
             }
 
@@ -161,6 +168,15 @@ namespace FifaBestSquad
             var toSave = JsonConvert.SerializeObject(this.result);
             Directory.CreateDirectory(PathResults);
             File.WriteAllText(string.Format("{0}/{1}.json", PathResults, this.formation.Pattern), toSave);
+        }
+
+        private void CleanResultsFolder()
+        {
+            var file = PathResults + string.Format("{0}/{1}.json", PathResults, this.formation.Pattern);
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
         }
 
         private string BuildByPermutation(string permutation, int indexNumber, Player player)
@@ -224,6 +240,16 @@ namespace FifaBestSquad
 
         private void AddToResults(string basePlayer, string permutation)
         {
+            var allPlayersSum = this.formation.Positions.Select(pos => pos.Player).Sum(pl => pl.Rating);
+            var formationAverage = allPlayersSum / 11;
+
+            if (this.result.Squads.Any(s => s.Rating > formationAverage))
+            {
+                return;
+            }
+
+            this.result.Squads.RemoveAll(s => s.Rating < formationAverage);
+
             Squad squad = new Squad();
             var soma = 0;
             foreach (var pos in this.formation.Positions)
@@ -245,7 +271,7 @@ namespace FifaBestSquad
                 return;
             }
 
-            squad.Rating = soma / 11;
+            squad.Rating = formationAverage;
             squad.BasePlayer = basePlayer;
             squad.Permutation = permutation;
             this.result.Squads.Add(squad);
@@ -302,7 +328,6 @@ namespace FifaBestSquad
                             {
                                 Console.WriteLine(item.position);
                             }
-
                             this.players.Add(new Player
                             {
                                 Id = item.id,
@@ -313,7 +338,8 @@ namespace FifaBestSquad
                                 Nation = item.nation != null ? item.nation.name : string.Empty,
                                 Position = itemPosition,
                                 Rating = item.rating,
-                                IsSpecialType = item.isSpecialType
+                                IsSpecialType = item.isSpecialType,
+                                Color = item.color
                             });
                         }
                     }
