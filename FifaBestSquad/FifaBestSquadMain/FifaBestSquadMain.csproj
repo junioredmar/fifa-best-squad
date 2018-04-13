@@ -856,7 +856,6 @@
     <None Include="content\97.json" />
     <None Include="content\98.json" />
     <None Include="content\99.json" />
-    <None Include="content\data\formation\4-3-3 - Copy.json" />
     <None Include="content\data\formation\4-3-3.json" />
     <None Include="packages.config" />
     <None Include="results\4-3-3.json" />

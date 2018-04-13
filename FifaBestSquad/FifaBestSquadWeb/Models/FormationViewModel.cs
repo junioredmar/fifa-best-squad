@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace FifaBestSquadWeb.Models
 {
-    public class Formation
+    public class FormationViewModel
     {
-        public Formation()
+        public FormationViewModel()
         {
             Patterns = new List<SelectListItem>();
         }

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace FifaBestSquadWeb.Models
 {
-    public class Player
+    public class PlayerViewModel
     {
 
         public string Id { get; set; }

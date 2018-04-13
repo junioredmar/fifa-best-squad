@@ -1,5 +1,6 @@
 ﻿using FifaBestSquad;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,20 +12,11 @@ namespace FifaBestSquadMain
 {
     class Program
     {
-        private const string Path = "../../content/data/formation";
 
         static void Main(string[] args)
         {
             Console.WriteLine("STARTED");
-
-            var formation = new Formation("4-3-3");
-
-            //var toSave = JsonConvert.SerializeObject(formation);
-            //Directory.CreateDirectory(Path);
-            //File.WriteAllText(string.Format("{0}/{1}.json", Path, formation.Pattern), toSave);
-
-            BringFormationsToMemory();
-
+            
             //var uniquePathCreator = new UniquePathCreator();
             //var permutations = uniquePathCreator.CreateUniquePath(formation);
 
@@ -37,54 +29,6 @@ namespace FifaBestSquadMain
 
             Console.WriteLine("FINISHED");
             Console.ReadLine();
-        }
-
-        private static void BringFormationsToMemory()
-        {
-            Console.WriteLine("Bring all players to memory - START");
-
-            var formation = new List<Formation>();
-
-            DirectoryInfo d = new DirectoryInfo(Path);
-
-            foreach (var file in d.GetFiles("*.json"))
-            {
-                try
-                {
-                    using (StreamReader sr = new StreamReader(Path + "/" + file.Name))
-                    {
-                        string line = sr.ReadToEnd();
-                        var root = JsonConvert.DeserializeObject<Formation>(line);
-
-                        //foreach (var item in root.Positions)
-                        //{
-
-                        //    PositionEnum itemPosition;
-                        //    bool couldParse = Enum.TryParse(item.position, out itemPosition);
-                        //    formation.Add(new Player
-                        //    {
-                        //        Id = item.id,
-                        //        BaseId = item.baseId,
-                        //        Name = item.name,
-                        //        Club = item.club.name,
-                        //        League = item.league != null ? item.league.name : string.Empty,
-                        //        Nation = item.nation != null ? item.nation.name : string.Empty,
-                        //        Position = itemPosition,
-                        //        Rating = item.rating,
-                        //        IsSpecialType = item.isSpecialType,
-                        //        Color = item.color
-                        //    });
-                        //}
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
-                }
-
-            }
-
         }
 
         private static void PrintResults(FormationViewModel result)

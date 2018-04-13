@@ -5,11 +5,11 @@ using System.Web;
 
 namespace FifaBestSquadWeb.Models
 {
-    public class Squad
+    public class SquadViewModel
     {
-        public Squad()
+        public SquadViewModel()
         {
-            Cards = new List<Position>();
+            Cards = new List<PositionViewModel>();
         }
 
         public string Permutation { get; set; }
@@ -18,7 +18,7 @@ namespace FifaBestSquadWeb.Models
 
         public int Rating { get; set; }
 
-        public List<Position> Cards { get; set; }
+        public List<PositionViewModel> Cards { get; set; }
 
     }
 }

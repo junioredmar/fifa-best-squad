@@ -28,8 +28,6 @@ namespace FifaBestSquad
 
         private Formation formation;
 
-        private List<Queue<char>> positionQueues;
-
         private const string PathResults = "../../results";
 
         private FormationViewModel result;

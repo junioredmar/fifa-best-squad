@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="QuickGraph" Version="3.6.61119.7" />
     <PackageReference Include="RestSharp" Version="106.2.1" />
   </ItemGroup>
 

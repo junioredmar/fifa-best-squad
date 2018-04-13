@@ -8,8 +8,6 @@ namespace FifaBestSquad
 {
     public class UniquePathCreator
     {
-        private List<Player> players;
-
         private Formation formation;
 
         private const string PathUnique = "../../uniquePaths";

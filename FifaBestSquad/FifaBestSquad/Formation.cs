@@ -13,7 +13,7 @@ namespace FifaBestSquad
 
             this.Positions = new List<Position>();
 
-            this.SetPositions();
+            //this.SetPositions();
 
         }
 

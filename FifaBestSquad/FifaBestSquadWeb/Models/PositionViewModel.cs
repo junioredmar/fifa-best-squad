@@ -6,10 +6,10 @@ using System.Web;
 
 namespace FifaBestSquadWeb.Models
 {
-    public class Position
+    public class PositionViewModel
     {
         public PositionEnum PositionEnum { get; set; }
 
-        public Player Player { get; set; }
+        public PlayerViewModel Player { get; set; }
     }
 }
