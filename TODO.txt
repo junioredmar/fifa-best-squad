@@ -9,7 +9,7 @@
 - [BUG] Ainda ta pegando squad igual
 - [BUG] Ainda ta pegando carta especial
 
-
+- Tentar colocar o Id nas Positions pra ver se retorna quando deserializar
     _    
 _       _
     _    

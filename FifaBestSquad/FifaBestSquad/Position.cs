@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FifaBestSquad
 {
@@ -11,8 +12,10 @@ namespace FifaBestSquad
 
         public PositionEnum PositionEnum { get; set; }
 
+        [JsonIgnore]
         public Player Player { get; set; }
 
+        [JsonIgnore]
         public List<Position> TiedPositions { get; set; }
 
         public char Index { get; set; }

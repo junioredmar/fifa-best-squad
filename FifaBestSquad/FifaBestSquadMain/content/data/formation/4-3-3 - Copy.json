@@ -1,0 +1,179 @@
+{
+  "Pattern": "4-3-3",
+  "Positions": [
+    {
+      "PositionEnum": 17,
+      "Index": "A",
+      "TiedPositions": [
+        {
+          "Index": "B"
+        },
+        {
+          "Index": "C"
+        },
+        {
+          "Index": "D"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 15,
+      "Index": "B",
+      "TiedPositions": [
+        {
+          "Index": "A"
+        },
+        {
+          "Index": "F"
+        },
+        {
+          "Index": "G"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 12,
+      "Index": "C",
+      "TiedPositions": [
+        {
+          "Index": "A"
+        },
+        {
+          "Index": "E"
+        },
+        {
+          "Index": "H"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 6,
+      "Index": "D",
+      "TiedPositions": [
+        {
+          "Index": "A"
+        },
+        {
+          "Index": "E"
+        },
+        {
+          "Index": "F"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 9,
+      "Index": "E",
+      "TiedPositions": [
+        {
+          "Index": "C"
+        },
+        {
+          "Index": "D"
+        },
+        {
+          "Index": "H"
+        },
+        {
+          "Index": "I"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 9,
+      "Index": "F",
+      "TiedPositions": [
+        {
+          "Index": "B"
+        },
+        {
+          "Index": "D"
+        },
+        {
+          "Index": "G"
+        },
+        {
+          "Index": "J"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 14,
+      "Index": "G",
+      "TiedPositions": [
+        {
+          "Index": "B"
+        },
+        {
+          "Index": "F"
+        },
+        {
+          "Index": "J"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 11,
+      "Index": "H",
+      "TiedPositions": [
+        {
+          "Index": "C"
+        },
+        {
+          "Index": "H"
+        },
+        {
+          "Index": "I"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 7,
+      "Index": "I",
+      "TiedPositions": [
+        {
+          "Index": "E"
+        },
+        {
+          "Index": "H"
+        },
+        {
+          "Index": "J"
+        },
+        {
+          "Index": "K"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 7,
+      "Index": "J",
+      "TiedPositions": [
+        {
+          "Index": "F"
+        },
+        {
+          "Index": "G"
+        },
+        {
+          "Index": "I"
+        },
+        {
+          "Index": "K"
+        }
+      ]
+    },
+    {
+      "PositionEnum": 10,
+      "Index": "K",
+      "TiedPositions": [
+        {
+          "Index": "I"
+        },
+        {
+          "Index": "J"
+        }
+      ]
+    }
+  ]
+}
