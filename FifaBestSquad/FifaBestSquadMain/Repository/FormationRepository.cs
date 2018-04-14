@@ -16,13 +16,23 @@ namespace FifaBestSquadMain.Repository
 
         public List<Formation> GetFormationsFromJson()
         {
-            Console.WriteLine("Bring all players to memory - START");
+            DirectoryInfo d = new DirectoryInfo(Path);
+            var files = d.GetFiles("*.json");
+            return this.GetFromJson(files);
+        }
 
+        public Formation GetFormationByPattern(string pattern)
+        {
+            DirectoryInfo d = new DirectoryInfo(Path);
+            var files = d.GetFiles(string.Format("{0}.json", pattern));
+            return this.GetFromJson(files).FirstOrDefault();
+        }
+
+        private List<Formation> GetFromJson(FileInfo[] files)
+        {
             var formations = new List<Formation>();
 
-            DirectoryInfo d = new DirectoryInfo(Path);
-
-            foreach (var file in d.GetFiles("*.json"))
+            foreach (var file in files)
             {
                 try
                 {
@@ -32,6 +42,7 @@ namespace FifaBestSquadMain.Repository
                         dynamic form = JObject.Parse(line);
                         string pattern = (string)form.Pattern;
                         Formation formation = new Formation(pattern);
+                        formation.Permutations = form.Permutations.ToObject<List<string>>();
 
                         for (int i = 0; i < form.Positions.Count; i++)
                         {

@@ -22,20 +22,21 @@ namespace FifaBestSquad
 
     public class SquadCreator
     {
-        private const string Path = "../../content";
-
+        //private const string Path = "../../content";
+        private const string Path = "C:/MY_STUFFS/Projects/fifa/my_project/fifa-best-squad/FifaBestSquad/FifaBestSquadMain/content";
         private List<Player> players;
 
         private Formation formation;
 
-        private const string PathResults = "../../results";
+        private const string PathResults = "C:/MY_STUFFS/Projects/fifa/my_project/fifa-best-squad/FifaBestSquad/FifaBestSquadMain/results";
+        //private const string PathResults = "../../results";
 
-        private FormationViewModel result;
+        private FormationResult result;
 
 
         public void BuildPerfectSquad(Formation formation, List<string> permutations)
         {
-            this.result = new FormationViewModel();
+            this.result = new FormationResult();
             this.formation = formation;
             // this.GetFromPlayersFromEa();
             this.SetPlayersToMemory();
@@ -248,13 +249,13 @@ namespace FifaBestSquad
 
             this.result.Squads.RemoveAll(s => s.Rating < formationAverage);
 
-            Squad squad = new Squad();
+            SquadResult squad = new SquadResult();
             var soma = 0;
             foreach (var pos in this.formation.Positions)
             {
                 if (pos.Player != null)
                 {
-                    squad.Cards.Add(new Card
+                    squad.Positions.Add(new PositionResult
                     {
                         PositionEnum = pos.PositionEnum,
                         Player = pos.Player

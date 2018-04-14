@@ -10,12 +10,12 @@ namespace FifaBestSquad
 
     public class ResultChecker
     {
+        private const string PathResults = "C:/MY_STUFFS/Projects/fifa/my_project/fifa-best-squad/FifaBestSquad/FifaBestSquadMain/results";
+        //private const string PathResults = "../../results";
 
-        private const string PathResults = "../../results";
-
-        public FormationViewModel GetResults()
+        public FormationResult GetResults()
         {
-            var result = new FormationViewModel();
+            var result = new FormationResult();
 
             DirectoryInfo d = new DirectoryInfo(PathResults);
 
@@ -26,7 +26,7 @@ namespace FifaBestSquad
                     using (StreamReader sr = new StreamReader(PathResults + "/" + file.Name))
                     {
                         string line = sr.ReadToEnd();
-                        result = JsonConvert.DeserializeObject<FormationViewModel>(line);
+                        result = JsonConvert.DeserializeObject<FormationResult>(line);
                     }
                 }
                 catch (Exception e)

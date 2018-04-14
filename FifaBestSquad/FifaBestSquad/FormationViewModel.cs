@@ -6,21 +6,21 @@ namespace FifaBestSquad
 {
     using System.Linq;
 
-    public class FormationViewModel
+    public class FormationResult
     {
-        public FormationViewModel()
+        public FormationResult()
         {
-            Squads = new List<Squad>();
+            Squads = new List<SquadResult>();
         }
 
-        public List<Squad> Squads { get; set; }
+        public List<SquadResult> Squads { get; set; }
     }
 
-    public class Squad
+    public class SquadResult
     {
-        public Squad()
+        public SquadResult()
         {
-            Cards = new List<FifaBestSquad.Card>();
+            Positions = new List<FifaBestSquad.PositionResult>();
         }
 
         public string Permutation { get; set; }
@@ -29,18 +29,18 @@ namespace FifaBestSquad
 
         public int Rating { get; set; }
 
-        public List<Card> Cards { get; set; }
+        public List<PositionResult> Positions { get; set; }
 
         public override bool Equals(object obj)
         {
-            Squad other = obj as Squad;
+            SquadResult other = obj as SquadResult;
             if (other == null)
             {
                 return false;
             }
 
-            var playersSum = this.Cards.Sum(c => c.Player.BaseId);
-            var otherPlayersSum = other.Cards.Sum(c => c.Player.BaseId);
+            var playersSum = this.Positions.Sum(c => c.Player.BaseId);
+            var otherPlayersSum = other.Positions.Sum(c => c.Player.BaseId);
             if(playersSum != otherPlayersSum)
             {
                 return false;
@@ -62,41 +62,15 @@ namespace FifaBestSquad
 
         public override int GetHashCode()
         {
-            return this.Cards.GetHashCode();
+            return this.Positions.GetHashCode();
         }
     }
 
-    public class Card
+    public class PositionResult
     {
         public PositionEnum PositionEnum { get; set; }
 
         public Player Player { get; set; }
-
-        //public override bool Equals(object obj)
-        //{
-        //    Card other = obj as Card;
-        //    if (other == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (this.Player == null || other.Player == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (this.Player.Id == null || other.Player.Id == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (this.PositionEnum == other.PositionEnum && this.Player.Id.Equals(other.Player.Id))
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
 
         public override int GetHashCode()
         {

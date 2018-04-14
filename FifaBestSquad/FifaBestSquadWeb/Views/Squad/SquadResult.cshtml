@@ -1,0 +1,44 @@
+﻿@model IEnumerable<FifaBestSquad.SquadResult>
+
+@{
+    ViewBag.Title = "SquadResult";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>SquadResult</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Permutation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BasePlayer)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rating)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Permutation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BasePlayer)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rating)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "SquadDetail", new { permutation = item.Permutation}) 
+        </td>
+    </tr>
+}
+
+</table>

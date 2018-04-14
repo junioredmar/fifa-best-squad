@@ -1,15 +1,30 @@
 - Colocar o Base Player no squad - OK 
 - Colocar o permutation no squad - OK
 - Comparar os squads - OK
-- Randomizar os unique path antes de salvar
 - Verificar se precisa mesmo rodar diversos caminhos para o mesmo jogador
   - Talvez existam caminhos (nao-unicos) que podem gerar squads que nao existem
   - Mas pode ser que se rodarmos uma vez somente o caminho (ou 10%) ja é suficiente
   - Para isso, devo fazer um filtro grande, um pequeno e comparar os testes executados
-- [BUG] Ainda ta pegando squad igual
-- [BUG] Ainda ta pegando carta especial
+- [BUG] Ainda ta pegando squad igual - OK
+- [BUG] Ainda ta pegando carta especial - OK
 
-- Tentar colocar o Id nas Positions pra ver se retorna quando deserializar
+
+Save formations
+- Manually save formations
+Creating unique paths (Permutations)
+- Foreach formation (that has no permutation yet) create unique paths (permutations)
+- Before save unique paths, randomize
+Search player
+- from futhead
+Normalize Players
+- Iterate over all players and save one json with only necessary player information
+View
+- Create a page to filter and select the formation
+- Results
+
+
+
+
     _    
 _       _
     _    

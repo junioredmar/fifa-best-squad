@@ -13,6 +13,12 @@ namespace FifaBestSquadWeb.Service
         {
             FormationRepository repository = new FormationRepository();
             return repository.GetFormationsFromJson();
-        } 
+        }
+
+        public Formation GetFormationByPattern(string pattern)
+        {
+            FormationRepository repository = new FormationRepository();
+            return repository.GetFormationByPattern(pattern);
+        }
     }
 }

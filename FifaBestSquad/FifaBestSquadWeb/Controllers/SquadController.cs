@@ -1,4 +1,5 @@
-﻿using FifaBestSquadWeb.Models;
+﻿using FifaBestSquad;
+using FifaBestSquadWeb.Models;
 using FifaBestSquadWeb.Service;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace FifaBestSquadWeb.Controllers
             FormationService service = new FormationService();
             var formations = service.GetFormations();
 
-            FormationViewModel formationViewModel = new FormationViewModel();
+            FifaBestSquadWeb.Models.FormationViewModel formationViewModel = new FifaBestSquadWeb.Models.FormationViewModel();
 
             foreach (var formation in formations)
             {
@@ -34,16 +35,44 @@ namespace FifaBestSquadWeb.Controllers
         {
             try
             {
-                var value = collection["Pattern"];
+                string value = collection["Pattern"];
+
+                FormationService service = new FormationService();
+                Formation formation = service.GetFormationByPattern(value);
                 
 
-                return RedirectToAction("Index");
+
+                //var uniquePathCreator = new UniquePathCreator();
+                //var permutations = uniquePathCreator.CreateUniquePath(formation);
+
+                var analyzer = new SquadCreator();
+                analyzer.BuildPerfectSquad(formation, formation.Permutations);
+
+
+                return RedirectToAction("SquadResult");
             }
-            catch
+            catch (Exception e)
             {
                 return View();
             }
         }
-        
+
+        public ActionResult SquadResult()
+        {
+            var resultChecker = new ResultChecker();
+            var result = resultChecker.GetResults();
+
+            return View(result.Squads);
+        }
+
+        public ActionResult SquadDetail(string permutation)
+        {
+            var resultChecker = new ResultChecker();
+            var result = resultChecker.GetResults();
+            var squad = result.Squads.FirstOrDefault(s => s.Permutation == permutation);
+
+            return View(squad.Positions);
+        }
+
     }
 }

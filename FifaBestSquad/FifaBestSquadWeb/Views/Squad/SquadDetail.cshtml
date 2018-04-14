@@ -1,0 +1,48 @@
+﻿@model IEnumerable<FifaBestSquad.PositionResult>
+
+@{
+    ViewBag.Title = "SquadDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>SquadDetail</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PositionEnum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Player)
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PositionEnum)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Player.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Player.Rating)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Player.Nation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Player.League)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Player.Club)
+        </td>
+    </tr>
+    }
+
+</table>

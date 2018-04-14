@@ -192,6 +192,8 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Squad\Index.cshtml" />
+    <Content Include="Views\Squad\SquadResult.cshtml" />
+    <Content Include="Views\Squad\SquadDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

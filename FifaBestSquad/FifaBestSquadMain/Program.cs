@@ -31,7 +31,7 @@ namespace FifaBestSquadMain
             Console.ReadLine();
         }
 
-        private static void PrintResults(FormationViewModel result)
+        private static void PrintResults(FormationResult result)
         {
             var allSquads = result.Squads;
             if (allSquads == null || !allSquads.Any())
@@ -63,7 +63,7 @@ namespace FifaBestSquadMain
             {
                 var squad = allSquads.ElementAt(i);
                 Console.WriteLine("------------------------- Squad Rating: [" + squad.Rating + "] Base Player: [" + squad.BasePlayer + "] Permutation [" + squad.Permutation + "]");
-                foreach (var card in squad.Cards)
+                foreach (var card in squad.Positions)
                 {
                     Console.WriteLine("[" + card.PositionEnum + "][" + card.Player.Rating + "] " + card.Player.Name);
                 }
