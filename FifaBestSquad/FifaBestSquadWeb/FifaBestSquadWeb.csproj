@@ -210,6 +210,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FifaBestSquadMain\FifaBestSquadMain.csproj">
+      <Project>{cf6ee164-35df-46b4-b899-6fdbd9783c70}</Project>
+      <Name>FifaBestSquadMain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FifaBestSquad\FifaBestSquad.csproj">
       <Project>{995ec7a4-594f-4735-88e5-8064ee7a4328}</Project>
       <Name>FifaBestSquad</Name>

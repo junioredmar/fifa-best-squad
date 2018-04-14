@@ -1,5 +1,5 @@
 ﻿using FifaBestSquad;
-using FifaBestSquad.Repository;
+using FifaBestSquadMain.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,7 @@ namespace FifaBestSquadWeb.Service
         public List<Formation> GetFormations()
         {
             FormationRepository repository = new FormationRepository();
-            //return repository.GetFormationsFromJson();
-            return null;
+            return repository.GetFormationsFromJson();
         } 
     }
 }
